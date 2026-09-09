@@ -4,15 +4,22 @@ var userContacts;
 
     if(localStorage.getItem("phoneData") == null)
     {
-        userContacts = [];
+        userContacts = Array.from(document.querySelectorAll("#tableBody tr")).map(function (row) {
+            var cells = row.getElementsByTagName("td");
+
+            return {
+                name: cells[0].textContent.trim(),
+                phone: cells[1].textContent.trim(),
+                email: cells[2].textContent.trim()
+            };
+        });
+        localStorage.setItem("phoneData", JSON.stringify(userContacts));
     }
     else
     {
         userContacts = JSON.parse(localStorage.getItem("phoneData"));
     }
 
-
-displayData();    
 
 var userNameInp = document.getElementById("userName");
 var userPhoneInp = document.getElementById("userPhone");
@@ -165,4 +172,3 @@ function validateEmail()
         return false;
     }
 }
-

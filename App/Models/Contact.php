@@ -6,5 +6,5 @@ use MVC\PhoneBook\App\Models\Interface\MysqlBaseModel;
 
 class Contact extends MysqlBaseModel
 {
-    protected $table = 'users';
+    protected $table = 'contacts';
 }

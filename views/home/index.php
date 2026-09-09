@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>" />
     <link rel="stylesheet" href="<?php echo asset_url('css/all.min.css'); ?>" />
-    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>" />
+    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=2" />
 
 </head>
 
@@ -55,11 +55,20 @@
                         <th class="">Name</th>
                         <th class="">Phone</th>
                         <th class="">E-mail</th>
-                        <th class="col-1"></th>
-                        <th class="col-1"></th>
+                        <th class="col-1">Edit</th>
+                        <th class="col-1">Delete</th>
                     </thead>
 
                     <tbody id="tableBody">
+                        <?php foreach ($contacts as $contact) : ?>
+                            <tr>
+                                <td class="name"><?php echo $contact['name']; ?></td>
+                                <td class="phone"><?php echo $contact['phone']; ?></td>
+                                <td class="email"><?php echo $contact['email']; ?></td>
+                                <td><button onclick="editContact(this)" class="contact-action contact-action-edit" aria-label="Edit contact" title="Edit"><i class="fas fa-edit"></i></button></td>
+                                <td><button onclick="deleteContact(this)" class="contact-action contact-action-delete" aria-label="Delete contact" title="Delete"><i class="fas fa-trash-alt"></i></button></td>
+                            </tr>
+                        <?php endforeach; ?>
 
 
 
@@ -67,10 +76,7 @@
 
                 </table>
 
-
             </div>
-
-
 
         </div>
     </div>
@@ -82,7 +88,7 @@
     <script src="<?php echo asset_url('js/jquery-3.3.1.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/popper.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/index.js'); ?>"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=2"></script>
 </body>
 
 </html>

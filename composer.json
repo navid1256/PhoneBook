@@ -1,6 +1,6 @@
 {
-    "name": "navid/micro7",
-    "description": "A microframework with MVC Aechitecture",
+    "name": "navid/phonebook",
+    "description": "A microframework with MVC Architecture",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -18,6 +18,8 @@
     "require": {
         "vlucas/phpdotenv": "^5.6",
         "hisorange/browser-detect": "^5.0",
-        "catfan/medoo": "^2.6"
+        "catfan/medoo": "^2.6",
+        "fzaninotto/faker": "^1.5",
+        "fakerphp/faker": "*"
     }
 }
