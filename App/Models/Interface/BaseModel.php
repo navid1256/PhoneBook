@@ -7,7 +7,7 @@ abstract class BaseModel implements CrudInterface
     protected $connection;
     protected $table;
     protected $primaryKey = 'id';
-    protected $pageSize = 10;
+    protected $pageSize;
     protected $attributes = [];
 
     protected function __construct()

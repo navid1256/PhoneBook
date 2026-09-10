@@ -14,6 +14,8 @@ class HomeController
 
     public function index()
     {
+        global $faker;
+        global $request;
         $faker = \Faker\Factory::create('fa_IR');
 
         $prefix = $faker->randomElement([
@@ -45,6 +47,18 @@ class HomeController
         // }
 
         $contacts = $this->contactModel->getAll();
-        view('home.index', compact('contacts'));
+        $totalContacts = $this->contactModel->count();
+        $pageSize = $this->contactModel->getPageSize();
+        $currentPage = (isset($_GET['page']) && is_numeric($_GET['page']) && (int) $_GET['page'] > 0)
+            ? (int) $_GET['page']
+            : 1;
+        $totalPages = max(1, (int) ceil($totalContacts / $pageSize));
+        $currentPage = min($currentPage, $totalPages);
+
+        view('home.index', compact(
+            'contacts',
+            'currentPage',
+            'totalPages'
+        ));
     }
 }

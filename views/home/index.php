@@ -1,3 +1,5 @@
+<?php
+/* array of contacts */ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -75,6 +77,26 @@
                     </tbody>
 
                 </table>
+
+                <nav class="pagination-nav" aria-label="Contact pages">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item <?php echo $currentPage === 1 ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo max(1, $currentPage - 1); ?>" aria-label="Previous page">&laquo;</a>
+                        </li>
+
+                        <?php for ($page = 1; $page <= $totalPages; $page++) : ?>
+                            <li class="page-item <?php echo $page === $currentPage ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?php echo $page; ?>" <?php echo $page === $currentPage ? 'aria-current="page"' : ''; ?>>
+                                    <?php echo $page; ?>
+                                </a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <li class="page-item <?php echo $currentPage === $totalPages ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo min($totalPages, $currentPage + 1); ?>" aria-label="Next page">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
 
             </div>
 

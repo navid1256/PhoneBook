@@ -10,7 +10,7 @@ interface CrudInterface
 
     public function find(int $id): object;
 
-    public function get(array $columns, array $where): array;
+    public function get(mixed $columns, array $where): array;
 
     public function delete(array $where): int;
 }
