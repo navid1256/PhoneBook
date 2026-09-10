@@ -1,5 +1,12 @@
 <?php
-/* array of contacts */ ?>
+
+/**
+ * @var array $contacts
+ * @var int $currentPage
+ * @var int $totalPages
+ * @var string $search
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,9 +38,10 @@
 
             <div class="col-lg-4 inp">
 
-                <input onkeyup="searchFunction()" id="myInput" class="form-control mt-2" placeholder="search">
-                <span class="icon text-primary"><i class="fas fa-search"></i></span>
-
+                <form id="searchForm" method="get" action="">
+                    <input id="myInput" class="form-control mt-2" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="search">
+                    <span class="icon text-primary"><i class="fas fa-search"></i></span>
+                </form>
                 <h5 class="mt-2">Add New Contact</h5>
 
                 <input onblur="validateName()" class="form-control mb-3 mt-3" placeholder="add name" id="userName">
@@ -81,19 +89,19 @@
                 <nav class="pagination-nav" aria-label="Contact pages">
                     <ul class="pagination justify-content-center">
                         <li class="page-item <?php echo $currentPage === 1 ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="?page=<?php echo max(1, $currentPage - 1); ?>" aria-label="Previous page">&laquo;</a>
+                            <a class="page-link" href="?<?php echo http_build_query(['page' => max(1, $currentPage - 1), 'search' => $search]); ?>" aria-label="Previous page">&laquo;</a>
                         </li>
 
                         <?php for ($page = 1; $page <= $totalPages; $page++) : ?>
                             <li class="page-item <?php echo $page === $currentPage ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?php echo $page; ?>" <?php echo $page === $currentPage ? 'aria-current="page"' : ''; ?>>
+                                <a class="page-link" href="?<?php echo http_build_query(['page' => $page, 'search' => $search]); ?>" <?php echo $page === $currentPage ? 'aria-current="page"' : ''; ?>>
                                     <?php echo $page; ?>
                                 </a>
                             </li>
                         <?php endfor; ?>
 
                         <li class="page-item <?php echo $currentPage === $totalPages ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="?page=<?php echo min($totalPages, $currentPage + 1); ?>" aria-label="Next page">&raquo;</a>
+                            <a class="page-link" href="?<?php echo http_build_query(['page' => min($totalPages, $currentPage + 1), 'search' => $search]); ?>" aria-label="Next page">&raquo;</a>
                         </li>
                     </ul>
                 </nav>

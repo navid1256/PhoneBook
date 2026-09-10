@@ -93,22 +93,40 @@ function deleteContact(name)
 
 function searchFunction() 
 {
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("myTable");
-  tr = table.getElementsByTagName("tr");
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }       
+  var input = document.getElementById("myInput");
+  if (!input) {
+    return;
   }
+
+  var filter = input.value.trim().toUpperCase();
+  var rows = document.querySelectorAll("#tableBody tr");
+
+  Array.prototype.forEach.call(rows, function (row) {
+    var contactValues = Array.from(row.querySelectorAll("td"))
+      .slice(0, 3)
+      .map(function (cell) {
+        return (cell.textContent || "").toUpperCase();
+      });
+
+    var matches = contactValues.some(function (value) {
+      return value.indexOf(filter) > -1;
+    });
+
+    row.style.display = matches ? "" : "none";
+  });
+}
+
+var searchInput = document.getElementById("myInput");
+var searchForm = document.getElementById("searchForm");
+
+if (searchInput) {
+    searchInput.addEventListener("input", searchFunction);
+}
+
+if (searchForm) {
+    searchForm.addEventListener("submit", function () {
+        searchInput.value = searchInput.value.trim();
+    });
 }
 
 searchFunction();
