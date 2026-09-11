@@ -72,9 +72,9 @@
                     <tbody id="tableBody">
                         <?php foreach ($contacts as $contact) : ?>
                             <tr>
-                                <td class="name"><?php echo $contact['name']; ?></td>
-                                <td class="phone"><?php echo $contact['phone']; ?></td>
-                                <td class="email"><?php echo $contact['email']; ?></td>
+                                <td class="name"><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td class="phone"><?php echo htmlspecialchars($contact['phone'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td class="email"><?php echo htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><button onclick="editContact(this)" class="contact-action contact-action-edit" aria-label="Edit contact" title="Edit"><i class="fas fa-edit"></i></button></td>
                                 <td><button onclick="deleteContact(this)" class="contact-action contact-action-delete" aria-label="Delete contact" title="Delete"><i class="fas fa-trash-alt"></i></button></td>
                             </tr>
@@ -118,7 +118,7 @@
     <script src="<?php echo asset_url('js/jquery-3.3.1.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/popper.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=2"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=3"></script>
 </body>
 
 </html>

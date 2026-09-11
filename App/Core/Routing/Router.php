@@ -26,10 +26,13 @@ class Router
             return;
         }
 
-        $middleware = $this->currentRoute['middleware'];
-        foreach ($middleware as $middleware_class) {
+        foreach ($this->currentRoute['middleware'] as $middleware_class) {
+            if (!class_exists($middleware_class)) {
+                throw new RoutingException("Middleware class {$middleware_class} not found");
+            }
+
             $middleware_obj = new $middleware_class;
-            $middleware_obj->handle($middleware);
+            $middleware_obj->handle();
         }
     }
 
@@ -38,11 +41,12 @@ class Router
         $requestMethod = $request->method();
         $requestUri = $request->uri();
         foreach ($this->routes as $route) {
-            if (in_array($requestMethod, $route['methods'], true) && $requestUri === $route['uri']) {
-                return $route;
+            // Only consider routes that accept the current request method
+            if (!in_array($requestMethod, $route['methods'], true)) {
+                continue;
             }
 
-            if ($this->regexMatched($route)) {
+            if ($requestUri === $route['uri'] || $this->regexMatched($route)) {
                 return $route;
             }
         }
@@ -168,15 +172,13 @@ class Router
 
     public function dispatch404()
     {
-        http_response_code(404);
-        echo "404 Not Found";
+        view_error(404);
         die();
     }
 
     public function dispatch405()
     {
-        http_response_code(405);
-        echo "405 Method Not Allowed";
+        view_error(405);
         die();
     }
 
@@ -184,7 +186,11 @@ class Router
     {
         $requestMethod = $this->request->method();
         foreach ($this->routes as $route) {
-            if ($this->request->uri() === $route['uri'] && !in_array($requestMethod, $route['methods'])) {
+            if (in_array($requestMethod, $route['methods'], true)) {
+                continue;
+            }
+
+            if ($this->request->uri() === $route['uri'] || $this->regexMatched($route)) {
                 return true;
             }
         }

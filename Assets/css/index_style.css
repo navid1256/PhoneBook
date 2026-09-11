@@ -1,5 +1,4 @@
-body
-{
+body {
     color: aliceblue;
     background-size: cover;
     background-attachment: fixed;
@@ -7,43 +6,36 @@ body
 }
 
 
-.jum
-{
+.jum {
     padding: 30px 30px;
-    padding-bottom: 320px;
     width: 90%;
     margin: auto;
-    background-color: rgba(0,0,0,0.3);
-   
+    background-color: rgba(0, 0, 0, 0.3);
+
 }
 
-.tableh1 th
-{
+.tableh1 th {
     width: 30%;
 }
 
-.icon
-{
+.icon {
     position: absolute;
     top: 12px;
     left: 88%;
     font-size: 20px;
-    
-    
+
+
 }
 
-.alert
-{
+.alert {
     display: none;
 }
 
-.btn1
-{
+.btn1 {
     margin-bottom: 20px;
 }
 
-.contact-action
-{
+.contact-action {
     padding: 0;
     border: 0;
     background: transparent;
@@ -53,23 +45,70 @@ body
     transition: color 0.2s ease;
 }
 
-.contact-action:focus
-{
+.contact-action:focus {
     outline: 2px solid currentColor;
     outline-offset: 3px;
 }
 
-.contact-action-edit:hover
-{
+.contact-action-edit:hover {
     color: #ffc107;
 }
 
-.contact-action-delete:hover
-{
+.contact-action-delete:hover {
     color: #dc3545;
 }
 
-.pagination-nav
-{
+.pagination-nav {
     margin-top: 1rem;
+}
+
+.pagination-nav .pagination {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    right: 260px;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pagination-nav .page-item {
+    margin: 0;
+}
+
+.pagination-nav .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.65rem;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 0.25rem;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.pagination-nav .page-link:hover,
+.pagination-nav .page-link:focus {
+    color: #fff;
+    background-color: rgba(23, 162, 184, 0.85);
+    border-color: #17a2b8;
+    outline: none;
+}
+
+.pagination-nav .page-item.active .page-link {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.pagination-nav .page-item.disabled .page-link {
+    color: rgba(255, 255, 255, 0.45);
+    background-color: rgba(0, 0, 0, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    pointer-events: none;
 }

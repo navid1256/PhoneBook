@@ -1,8 +1,12 @@
 'use strict';
 
-var userContacts;
+var userNameInp = document.getElementById("userName");
+var userPhoneInp = document.getElementById("userPhone");
+var userEmailInp = document.getElementById("userEmail");
+var tableBody = document.getElementById("tableBody");
 
-userContacts = Array.from(document.querySelectorAll("#tableBody tr")).map(function (row) {
+// Client-side copy of the contacts rendered by the server
+var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (row) {
     var cells = row.getElementsByTagName("td");
 
     return {
@@ -12,83 +16,100 @@ userContacts = Array.from(document.querySelectorAll("#tableBody tr")).map(functi
     };
 });
 
-
-var userNameInp = document.getElementById("userName");
-var userPhoneInp = document.getElementById("userPhone");
-var userEmailInp = document.getElementById("userEmail");
-
-var inps = document.getElementsByTagName("input");
+function escapeHtml(value)
+{
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 function addContact()
 {
-    
-    if(validateName() == true && validatePhone() == true && validateEmail() == true){
-        
-    var contacts = { name:userNameInp.value , phone:userPhoneInp.value , email:userEmailInp.value};
-    
-    userContacts.push(contacts);
-    
-    displayData();
-    
-    clearData();
+    if (validateName() == true && validatePhone() == true && validateEmail() == true) {
+        userContacts.push({
+            name: userNameInp.value,
+            phone: userPhoneInp.value,
+            email: userEmailInp.value
+        });
 
-    }
-    else
-    {
+        displayData();
+        clearData();
+    } else {
         alert("please fill in the form");
     }
-    
-    
-    
 }
 
-
-
+// Render rows with the exact same markup the server-side view produces
 function displayData()
 {
     var temp = "";
-    for(var i=0 ; i<userContacts.length ; i++)
-    {
-        temp += "<tr><td>"+userContacts[i].name+"</td><td>"+userContacts[i].phone+"</td><td>"+userContacts[i].email+"</td><td>"+'<a onclick="deleteContact(\''+userContacts[i].name+'\')" class="text-danger"><i class="fas fa-minus-circle"></i></a>'+"</td><td>"+'<a href="#" class="text-white"><i class="fas fa-envelope"></i></a>'+"</td></tr>";
+
+    for (var i = 0; i < userContacts.length; i++) {
+        temp += "<tr>" +
+            "<td class=\"name\">" + escapeHtml(userContacts[i].name) + "</td>" +
+            "<td class=\"phone\">" + escapeHtml(userContacts[i].phone) + "</td>" +
+            "<td class=\"email\">" + escapeHtml(userContacts[i].email) + "</td>" +
+            "<td><button onclick=\"editContact(this)\" class=\"contact-action contact-action-edit\" aria-label=\"Edit contact\" title=\"Edit\"><i class=\"fas fa-edit\"></i></button></td>" +
+            "<td><button onclick=\"deleteContact(this)\" class=\"contact-action contact-action-delete\" aria-label=\"Delete contact\" title=\"Delete\"><i class=\"fas fa-trash-alt\"></i></button></td>" +
+            "</tr>";
     }
-    document.getElementById("tableBody").innerHTML = temp;
-    
+
+    tableBody.innerHTML = temp;
+    searchFunction();
 }
 
+function rowIndexOf(button)
+{
+    var row = button.closest("tr");
 
+    if (!row) {
+        return -1;
+    }
 
+    return Array.prototype.indexOf.call(tableBody.querySelectorAll("tr"), row);
+}
 
+// Called from the view as deleteContact(this)
+function deleteContact(button)
+{
+    var index = rowIndexOf(button);
 
+    if (index > -1) {
+        userContacts.splice(index, 1);
+        displayData();
+    }
+}
+
+// Called from the view as editContact(this):
+// load the row values back into the form and remove the row
+function editContact(button)
+{
+    var index = rowIndexOf(button);
+
+    if (index === -1) {
+        return;
+    }
+
+    userNameInp.value = userContacts[index].name;
+    userPhoneInp.value = userContacts[index].phone;
+    userEmailInp.value = userContacts[index].email;
+
+    userContacts.splice(index, 1);
+    displayData();
+
+    userNameInp.focus();
+}
+
+// Only clear the "add contact" inputs, never the search box
 function clearData()
 {
-    for(var i=0; i<inps.length; i++)
-    {
-        inps[i].value="";
-    }
+    userNameInp.value = "";
+    userPhoneInp.value = "";
+    userEmailInp.value = "";
 }
-
-
-
-
-
-
-function deleteContact(name)
-{
-    var i=0;
-    for(var i=0; i<userContacts.length; i++)
-    {
-        if(userContacts[i].name == name)
-        {
-            userContacts.splice(i , 1);
-        }
-    }
-    
-    
-    displayData();
-    
-}
-
-
 
 
 function searchFunction() 

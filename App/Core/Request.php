@@ -26,6 +26,11 @@ class Request
         }
 
         $this->uri = '/' . trim($this->uri, '/');
+
+        // Treat the front controller itself as the site root
+        if ($this->uri === '/index.php') {
+            $this->uri = '/';
+        }
     }
 
     public function addRouteParams($key, $value)

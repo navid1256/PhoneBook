@@ -62,3 +62,8 @@ function view($path, $data = [])
 
     include_once $view_full_path;
 }
+
+function xss_cleaner($data)
+{
+    return filter_var(htmlspecialchars($data, ENT_QUOTES, 'UTF-8'), FILTER_SANITIZE_SPECIAL_CHARS);
+}
