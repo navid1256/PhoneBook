@@ -45,11 +45,11 @@
                 <h5 class="mt-2">Add New Contact</h5>
 
                 <form id="addForm" method="post" action="<?php echo site_url('contact/add'); ?>">
-                    <input onblur="validateName()" name="name" class="form-control mb-3 mt-3" placeholder="add name" id="userName">
+                    <input name="name" class="form-control mb-3 mt-3" placeholder="add name" id="userName">
                     <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
-                    <input onblur="validatePhone()" name="phone" class="form-control mb-3" placeholder="add phone" id="userPhone">
+                    <input name="phone" class="form-control mb-3" placeholder="add phone" id="userPhone">
                     <div id="phoneAlert" class="alert alert-danger text-justify p-2 ">Please add a valid number</div>
-                    <input onblur="validateEmail()" name="email" class="form-control mb-3" placeholder="add e-mail (optional)" id="userEmail">
+                    <input name="email" class="form-control mb-3" placeholder="add e-mail (optional)" id="userEmail">
                     <div id="mailAlert" class="alert alert-danger text-justify p-2 ">Please add a valid e-mail</div>
                     <div id="addStatus" class="alert alert-danger text-justify p-2 "></div>
 
@@ -121,7 +121,7 @@
     <script src="<?php echo asset_url('js/jquery-3.3.1.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/popper.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=6"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=7"></script>
 </body>
 
 </html>

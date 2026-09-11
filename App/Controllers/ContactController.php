@@ -31,6 +31,10 @@ class ContactController
                 echo json_encode(['success' => false, 'message' => 'Invalid phone number format.']);
                 return;
             }
+            // Normalize to digits only (same rule as Validator): keeps the value
+            // within the phone column size (varchar(12)) and makes duplicate
+            // detection independent of formatting (+98 ... vs 0912...).
+            $phone = preg_replace('/\D/', '', $phone);
             if (!empty($email) && !Validator::isValidEmail($email)) {
                 echo json_encode(['success' => false, 'message' => 'Invalid email format.']);
                 return;

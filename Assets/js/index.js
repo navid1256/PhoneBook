@@ -222,17 +222,20 @@ function validateName()
 
 function validatePhone()
 {
-    var regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-    if(regex.test(userPhoneInp.value) == true)
-    {
+    // Same rule as the server-side Validator::isValidPhoneNumber:
+    // strip non-digit characters and accept 10-12 digits.
+    // Covers 10-digit local numbers, 11-digit Iranian mobile (09xxxxxxxxx),
+    // and international numbers with country code.
+    var cleanedPhone = userPhoneInp.value.replace(/\D/g, "");
+    var length = cleanedPhone.length;
+
+    if (length >= 10 && length <= 12) {
         showAlert("phoneAlert", false);
         return true;
     }
-    else
-    {
-        showAlert("phoneAlert", true);
-        return false;
-    }
+
+    showAlert("phoneAlert", true);
+    return false;
 }
 
 
