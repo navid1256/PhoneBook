@@ -17,10 +17,10 @@ class Validator
         // Remove any non-digit characters
         $cleanedPhone = preg_replace('/\D/', '', $phone);
 
-        // Check if the cleaned phone number has 10 digits
-        if (strlen($cleanedPhone) === 10) {
-            return true;
-        }
-        return false;
+        // Accept 10-12 digits (matches the client-side validation in index.js):
+        // covers 10-digit local numbers, 11-digit Iranian mobile (09xxxxxxxxx),
+        // and international numbers with country code.
+        $length = strlen($cleanedPhone);
+        return $length >= 10 && $length <= 12;
     }
 }

@@ -18,12 +18,6 @@ class ContactController
         global $request;
         if ($request->method() === 'POST') {
 
-            //check if the contact already exists
-            $contactExists = $this->contactModel->count(['name' => $_POST['name'], 'phone' => $_POST['phone']]);
-            if ($contactExists > 0) {
-                echo json_encode(['success' => false, 'message' => 'Contact already exists.']);
-                return;
-            }
             $name = isset($_POST['name']) ? trim((string) $_POST['name']) : '';
             $phone = isset($_POST['phone']) ? trim((string) $_POST['phone']) : '';
             $email = isset($_POST['email']) ? trim((string) $_POST['email']) : '';
@@ -39,6 +33,13 @@ class ContactController
             }
             if (!empty($email) && !Validator::isValidEmail($email)) {
                 echo json_encode(['success' => false, 'message' => 'Invalid email format.']);
+                return;
+            }
+
+            //check if the contact already exists
+            $contactExists = $this->contactModel->count(['name' => $name, 'phone' => $phone]);
+            if ($contactExists > 0) {
+                echo json_encode(['success' => false, 'message' => 'Contact already exists.']);
                 return;
             }
 

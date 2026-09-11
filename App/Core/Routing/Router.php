@@ -14,6 +14,8 @@ class Router
     public function __construct()
     {
         $this->request = new Request();
+        // Make the request instance available to controllers/middleware via `global $request`
+        $GLOBALS['request'] = $this->request;
         $this->routes = Route::routes();
         $this->currentRoute = $this->findRoute($this->request) ?? null;
         // Run Midlleware Here

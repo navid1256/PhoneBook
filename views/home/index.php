@@ -44,14 +44,17 @@
                 </form>
                 <h5 class="mt-2">Add New Contact</h5>
 
-                <input onblur="validateName()" class="form-control mb-3 mt-3" placeholder="add name" id="userName">
-                <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
-                <input onblur="validatePhone()" class="form-control mb-3" placeholder="add phone" id="userPhone">
-                <div id="phoneAlert" class="alert alert-danger text-justify p-2 ">Please add a valid number</div>
-                <input onblur="validateEmail()" class="form-control mb-3" placeholder="add e-mail" id="userEmail">
-                <div id="mailAlert" class="alert alert-danger text-justify p-2 ">Please add a valid e-mail</div>
+                <form id="addForm" method="post" action="<?php echo site_url('contact/add'); ?>">
+                    <input onblur="validateName()" name="name" class="form-control mb-3 mt-3" placeholder="add name" id="userName">
+                    <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
+                    <input onblur="validatePhone()" name="phone" class="form-control mb-3" placeholder="add phone" id="userPhone">
+                    <div id="phoneAlert" class="alert alert-danger text-justify p-2 ">Please add a valid number</div>
+                    <input onblur="validateEmail()" name="email" class="form-control mb-3" placeholder="add e-mail" id="userEmail">
+                    <div id="mailAlert" class="alert alert-danger text-justify p-2 ">Please add a valid e-mail</div>
+                    <div id="addStatus" class="alert alert-danger text-justify p-2 "></div>
 
-                <button onclick="addContact()" class="btn btn-info w-100 btn1">Add</button>
+                    <button type="submit" class="btn btn-info w-100 btn1">Add</button>
+                </form>
 
 
             </div>
@@ -118,7 +121,7 @@
     <script src="<?php echo asset_url('js/jquery-3.3.1.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/popper.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=3"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=4"></script>
 </body>
 
 </html>

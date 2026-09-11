@@ -4,6 +4,8 @@ var userNameInp = document.getElementById("userName");
 var userPhoneInp = document.getElementById("userPhone");
 var userEmailInp = document.getElementById("userEmail");
 var tableBody = document.getElementById("tableBody");
+var addForm = document.getElementById("addForm");
+var addStatus = document.getElementById("addStatus");
 
 // Client-side copy of the contacts rendered by the server
 var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (row) {
@@ -26,20 +28,60 @@ function escapeHtml(value)
         .replace(/'/g, "&#039;");
 }
 
+// POST the form to the server so the new contact is stored in the database
 function addContact()
 {
-    if (validateName() == true && validatePhone() == true && validateEmail() == true) {
-        userContacts.push({
+    fetch(addForm.action, {
+        method: "POST",
+        body: new URLSearchParams({
             name: userNameInp.value,
             phone: userPhoneInp.value,
             email: userEmailInp.value
+        })
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            if (data.success) {
+                showAddStatus(data.message, true);
+                // Reload so the table and pagination reflect the database
+                setTimeout(function () {
+                    window.location.reload();
+                }, 700);
+            } else {
+                showAddStatus(data.message, false);
+            }
+        })
+        .catch(function () {
+            showAddStatus("Could not reach the server. Please try again.", false);
         });
+}
 
-        displayData();
-        clearData();
-    } else {
-        alert("please fill in the form");
+// Intercept the form submit: validate on the client first, then POST via fetch
+if (addForm) {
+    addForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (validateName() == true && validatePhone() == true && validateEmail() == true) {
+            addContact();
+        } else {
+            alert("please fill in the form");
+        }
+    });
+}
+
+// Show server responses (success / error) under the add-contact form
+function showAddStatus(message, ok)
+{
+    if (!addStatus) {
+        return;
     }
+
+    addStatus.textContent = message;
+    addStatus.classList.remove("alert-danger", "alert-success");
+    addStatus.classList.add(ok ? "alert-success" : "alert-danger");
+    addStatus.style.display = "block";
 }
 
 // Render rows with the exact same markup the server-side view produces
