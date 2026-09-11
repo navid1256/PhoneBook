@@ -43,11 +43,11 @@ class ContactController
                 return;
             }
 
-            // Create a new contact
+            // Create a new contact (email is optional: store NULL when empty)
             $contactId = $this->contactModel->create([
                 'name' => $name,
                 'phone' => $phone,
-                'email' => $email
+                'email' => $email !== '' ? $email : null
             ]);
 
             if ($contactId) {

@@ -195,17 +195,27 @@ if (searchForm) {
 searchFunction();
 
 
+// Show/hide an inline alert; tolerate a missing element so the flow never crashes
+function showAlert(id, show)
+{
+    var el = document.getElementById(id);
+
+    if (el) {
+        el.style.display = show ? "block" : "none";
+    }
+}
+
 function validateName()
 {
     var regex = /^[a-zA-Z0-9]+([a-zA-Z0-9](_|-| )[a-zA-Z0-9])*[a-zA-Z0-9]+$/;
     if(regex.test(userNameInp.value) == true)
     {
-        document.getElementById("nameAlert").style.display="none";
+        showAlert("nameAlert", false);
         return true;
     }
     else
     {
-        document.getElementById("nameAlert").style.display="block";
+        showAlert("nameAlert", true);
         return false;
     }
 }
@@ -215,12 +225,12 @@ function validatePhone()
     var regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
     if(regex.test(userPhoneInp.value) == true)
     {
-        document.getElementById("phoneAlert").style.display="none";
+        showAlert("phoneAlert", false);
         return true;
     }
     else
     {
-        document.getElementById("phoneAlert").style.display="block";
+        showAlert("phoneAlert", true);
         return false;
     }
 }
@@ -228,16 +238,22 @@ function validatePhone()
 
 function validateEmail()
 {
+    // Email is optional: an empty field is considered valid
+    if (userEmailInp.value.trim() === "") {
+        showAlert("mailAlert", false);
+        return true;
+    }
+
     var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     
     if(regex.test(userEmailInp.value) == true)
     {
-        document.getElementById("mailAlert").style.display="none";
+        showAlert("mailAlert", false);
         return true;
     }
     else
     {
-        document.getElementById("mailAlert").style.display="block";
+        showAlert("mailAlert", true);
         return false;
     }
 }
