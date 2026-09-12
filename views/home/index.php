@@ -17,8 +17,9 @@
 
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>" />
     <link rel="stylesheet" href="<?php echo asset_url('css/all.min.css'); ?>" />
-    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=3" />
+    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=6" />
     <link rel="stylesheet" href="<?php echo asset_url('template/searchbox/style.css'); ?>" />
+
 
 </head>
 
@@ -50,11 +51,37 @@
                 <h5 class="mt-2">Add New Contact</h5>
 
                 <form id="addForm" method="post" action="<?php echo site_url('contact/add'); ?>">
-                    <input name="name" class="form-control mb-3 mt-3" placeholder="Name" id="userName">
+                    <div class="form-outline mt-3" data-mdb-input-init>
+                        <input type="text" id="userName" name="name" class="form-control" />
+                        <label class="form-label" for="userName">Name</label>
+                        <div class="form-notch">
+                            <div class="form-notch-leading"></div>
+                            <div class="form-notch-middle"></div>
+                            <div class="form-notch-trailing"></div>
+                        </div>
+                    </div>
                     <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
-                    <input name="phone" class="form-control mb-3" placeholder="Phone" id="userPhone">
+
+                    <div class="form-outline mt-3" data-mdb-input-init>
+                        <input type="text" id="userPhone" name="phone" class="form-control" />
+                        <label class="form-label" for="userPhone">Phone</label>
+                        <div class="form-notch">
+                            <div class="form-notch-leading"></div>
+                            <div class="form-notch-middle"></div>
+                            <div class="form-notch-trailing"></div>
+                        </div>
+                    </div>
                     <div id="phoneAlert" class="alert alert-danger text-justify p-2 ">Please add a valid number</div>
-                    <input name="email" class="form-control mb-3" placeholder="E-mail (optional)" id="userEmail">
+
+                    <div class="form-outline mt-3" data-mdb-input-init>
+                        <input type="text" id="userEmail" name="email" class="form-control" />
+                        <label class="form-label" for="userEmail">E-mail (optional)</label>
+                        <div class="form-notch">
+                            <div class="form-notch-leading"></div>
+                            <div class="form-notch-middle"></div>
+                            <div class="form-notch-trailing"></div>
+                        </div>
+                    </div>
                     <div id="mailAlert" class="alert alert-danger text-justify p-2 ">Please add a valid e-mail</div>
                     <div id="addStatus" class="alert alert-danger text-justify p-2 "></div>
 
@@ -126,7 +153,7 @@
     <script src="<?php echo asset_url('js/jquery-3.3.1.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/popper.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=7"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=9"></script>
 </body>
 
 </html>

@@ -7,6 +7,52 @@ var tableBody = document.getElementById("tableBody");
 var addForm = document.getElementById("addForm");
 var addStatus = document.getElementById("addStatus");
 
+
+/* --- Material form-outline behavior (MDB UI-Kit 4.2.0 replica) --------
+   Adds the `.active` class while a field holds a value and sizes the
+   notch "middle" segment to its label width — the same job mdb.min.js
+   does on the 7Auth register page. Reacts to the bubbled "input"
+   events that setInputValue() dispatches, so programmatic fills
+   (editContact) also float the labels. Scoped to .form-outline only.
+   ------------------------------------------------------------------ */
+function updateFormOutline(input)
+{
+    var wrapper = input.closest(".form-outline");
+
+    if (!wrapper) {
+        return;
+    }
+
+    var label = wrapper.querySelector(".form-label");
+    var notchMiddle = wrapper.querySelector(".form-notch-middle");
+
+    if (input.value !== "") {
+        input.classList.add("active");
+    } else {
+        input.classList.remove("active");
+    }
+
+    if (label && notchMiddle) {
+        notchMiddle.style.width = label.clientWidth + "px";
+    }
+}
+
+function initFormOutlines(scope)
+{
+    var inputs = (scope || document).querySelectorAll(".form-outline .form-control");
+
+    Array.prototype.forEach.call(inputs, function (input) {
+        updateFormOutline(input);
+
+        input.addEventListener("input", function () {
+            updateFormOutline(input);
+        });
+    });
+}
+
+initFormOutlines();
+
+
 // Client-side copy of the contacts rendered by the server
 var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (row) {
     var cells = row.getElementsByTagName("td");
@@ -125,6 +171,14 @@ function deleteContact(button)
     }
 }
 
+// Set an MDB input value and notify its floating label
+// (MDB only reacts to real events, not to direct .value assignment)
+function setInputValue(input, value)
+{
+    input.value = value;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
 // Called from the view as editContact(this):
 // load the row values back into the form and remove the row
 function editContact(button)
@@ -135,9 +189,9 @@ function editContact(button)
         return;
     }
 
-    userNameInp.value = userContacts[index].name;
-    userPhoneInp.value = userContacts[index].phone;
-    userEmailInp.value = userContacts[index].email;
+    setInputValue(userNameInp, userContacts[index].name);
+    setInputValue(userPhoneInp, userContacts[index].phone);
+    setInputValue(userEmailInp, userContacts[index].email);
 
     userContacts.splice(index, 1);
     displayData();
@@ -148,9 +202,9 @@ function editContact(button)
 // Only clear the "add contact" inputs, never the search box
 function clearData()
 {
-    userNameInp.value = "";
-    userPhoneInp.value = "";
-    userEmailInp.value = "";
+    setInputValue(userNameInp, "");
+    setInputValue(userPhoneInp, "");
+    setInputValue(userEmailInp, "");
 }
 
 

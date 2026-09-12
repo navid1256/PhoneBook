@@ -28,12 +28,145 @@ body {
     padding: 0px 10px 30px;
 }
 
+/* ------------------------------------------------------------------
+   Material form-outline inputs — 1:1 replica of the MDB UI-Kit 4.2.0
+   rules used by the register page of the 7Auth project, but SCOPED to
+   the Add Contact form (.inp) so no external/global framework CSS can
+   affect the rest of the page.
+   The only deviations from MDB are the two colors this dark theme
+   needs: white input text + a subtle dark input background, and a
+   light label color instead of MDB's dark rgba(0,0,0,.6).
+   ------------------------------------------------------------------ */
+.inp .form-outline {
+    position: relative;
+}
+
+.inp .form-outline .form-control {
+    min-height: auto;
+    height: auto;
+    border: 0;
+    background: transparent;
+    transition: all 0.2s linear;
+    /* dark-theme fixes: readable text + a visible field background */
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.inp .form-outline .form-control:focus {
+    box-shadow: none !important;
+}
+
+.inp .form-outline .form-control~.form-label {
+    position: absolute;
+    top: 0;
+    max-width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    left: 0.75rem;
+    padding-top: 0.3rem;
+    pointer-events: none;
+    transform-origin: 0 0;
+    transition: all 0.2s ease-out;
+    color: rgba(255, 255, 255, 0.6);
+    /* dark-theme fix (MDB uses rgba(0,0,0,.6)) */
+    margin-bottom: 0;
+}
+
+.inp .form-outline .form-control~.form-notch {
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    text-align: left;
+    pointer-events: none;
+}
+
+.inp .form-outline .form-control~.form-notch div {
+    pointer-events: none;
+    border: 1px solid #bdbdbd;
+    box-sizing: border-box;
+    background: transparent;
+    transition: all 0.2s linear;
+}
+
+.inp .form-outline .form-control~.form-notch .form-notch-leading {
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0.5rem;
+    border-right: none;
+    border-radius: 0.25rem 0 0 0.25rem;
+}
+
+.inp .form-outline .form-control~.form-notch .form-notch-middle {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: calc(100% - 1rem);
+    height: 100%;
+    border-right: none;
+    border-left: none;
+}
+
+.inp .form-outline .form-control~.form-notch .form-notch-trailing {
+    flex-grow: 1;
+    height: 100%;
+    border-left: none;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* the label floats up when the field is focused or holds a value (.active) */
+.inp .form-outline .form-control.active~.form-label,
+.inp .form-outline .form-control:focus~.form-label {
+    transform: translateY(-1rem) translateY(0.1rem) scale(0.8);
+}
+
+.inp .form-outline .form-control:focus~.form-label {
+    color: #1266f1;
+}
+
+.inp .form-outline .form-control.active~.form-notch .form-notch-middle,
+.inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-right: none;
+    border-left: none;
+    border-top: 1px solid transparent;
+}
+
+.inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-color: #1266f1;
+    box-shadow: 0 1px 0 0 #1266f1;
+    border-top: 1px solid transparent;
+}
+
+.inp .form-outline .form-control.active~.form-notch .form-notch-leading,
+.inp .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-right: none;
+}
+
+.inp .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-color: #1266f1;
+    box-shadow: -1px 0 0 0 #1266f1, 0 1px 0 0 #1266f1, 0 -1px 0 0 #1266f1;
+}
+
+.inp .form-outline .form-control.active~.form-notch .form-notch-trailing,
+.inp .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-left: none;
+}
+
+.inp .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-color: #1266f1;
+    box-shadow: 1px 0 0 0 #1266f1, 0 -1px 0 0 #1266f1, 0 1px 0 0 #1266f1;
+}
+
 .alert {
     display: none;
 }
 
 .btn1 {
-    margin-bottom: 20px;
+    margin: 20px 0px;
 }
 
 .contact-action {
