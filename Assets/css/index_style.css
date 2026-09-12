@@ -18,13 +18,14 @@ body {
     width: 30%;
 }
 
-.icon {
-    position: absolute;
-    top: 12px;
-    left: 88%;
-    font-size: 20px;
-
-
+/* Title and searchbox sit opposite each other in one flex row */
+.navbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0px 10px 30px;
 }
 
 .alert {

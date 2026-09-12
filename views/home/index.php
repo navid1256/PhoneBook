@@ -17,7 +17,8 @@
 
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>" />
     <link rel="stylesheet" href="<?php echo asset_url('css/all.min.css'); ?>" />
-    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=2" />
+    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=3" />
+    <link rel="stylesheet" href="<?php echo asset_url('template/searchbox/style.css'); ?>" />
 
 </head>
 
@@ -30,6 +31,14 @@
         <div class=" navbar">
             <h3>Phone Book <i class="far fa-address-book"></i></h3>
 
+            <form id="searchForm" method="get" action="" class="wrap">
+                <div class="search">
+                    <input type="text" id="myInput" class="searchTerm" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="What Contact are you looking for?">
+                    <button type="submit" class="searchButton">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </form>
         </div>
 
 
@@ -38,18 +47,14 @@
 
             <div class="col-lg-4 inp">
 
-                <form id="searchForm" method="get" action="">
-                    <input id="myInput" class="form-control mt-2" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="search">
-                    <span class="icon text-primary"><i class="fas fa-search"></i></span>
-                </form>
                 <h5 class="mt-2">Add New Contact</h5>
 
                 <form id="addForm" method="post" action="<?php echo site_url('contact/add'); ?>">
-                    <input name="name" class="form-control mb-3 mt-3" placeholder="add name" id="userName">
+                    <input name="name" class="form-control mb-3 mt-3" placeholder="Name" id="userName">
                     <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
-                    <input name="phone" class="form-control mb-3" placeholder="add phone" id="userPhone">
+                    <input name="phone" class="form-control mb-3" placeholder="Phone" id="userPhone">
                     <div id="phoneAlert" class="alert alert-danger text-justify p-2 ">Please add a valid number</div>
-                    <input name="email" class="form-control mb-3" placeholder="add e-mail (optional)" id="userEmail">
+                    <input name="email" class="form-control mb-3" placeholder="E-mail (optional)" id="userEmail">
                     <div id="mailAlert" class="alert alert-danger text-justify p-2 ">Please add a valid e-mail</div>
                     <div id="addStatus" class="alert alert-danger text-justify p-2 "></div>
 
