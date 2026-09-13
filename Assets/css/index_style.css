@@ -125,7 +125,7 @@ body {
 }
 
 .inp .form-outline .form-control:focus~.form-label {
-    color: #1266f1;
+    color: #fdfdfd;
 }
 
 .inp .form-outline .form-control.active~.form-notch .form-notch-middle,
@@ -136,8 +136,8 @@ body {
 }
 
 .inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
-    border-color: #1266f1;
-    box-shadow: 0 1px 0 0 #1266f1;
+    border-color: #ffffff;
+    box-shadow: 0 1px 0 0 #ffffff;
     border-top: 1px solid transparent;
 }
 
@@ -147,8 +147,8 @@ body {
 }
 
 .inp .form-outline .form-control:focus~.form-notch .form-notch-leading {
-    border-color: #1266f1;
-    box-shadow: -1px 0 0 0 #1266f1, 0 1px 0 0 #1266f1, 0 -1px 0 0 #1266f1;
+    border-color: #ffffff;
+    box-shadow: -1px 0 0 0 #ffffff, 0 1px 0 0 #ffffff, 0 -1px 0 0 #ffffff;
 }
 
 .inp .form-outline .form-control.active~.form-notch .form-notch-trailing,
@@ -157,8 +157,8 @@ body {
 }
 
 .inp .form-outline .form-control:focus~.form-notch .form-notch-trailing {
-    border-color: #1266f1;
-    box-shadow: 1px 0 0 0 #1266f1, 0 -1px 0 0 #1266f1, 0 1px 0 0 #1266f1;
+    border-color: #ffffff;
+    box-shadow: 1px 0 0 0 #ffffff, 0 -1px 0 0 #ffffff, 0 1px 0 0 #ffffff;
 }
 
 .alert {

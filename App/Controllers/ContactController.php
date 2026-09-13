@@ -63,4 +63,19 @@ class ContactController
             echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
         }
     }
+
+    public function delete($id)
+    {
+        global $request;
+        if ($request->method() === 'DELETE') {
+            $deleted = $this->contactModel->delete($id);
+            if ($deleted) {
+                echo json_encode(['success' => true, 'message' => 'Contact deleted successfully.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to delete contact.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+        }
+    }
 }
