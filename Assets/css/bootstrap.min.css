@@ -5342,6 +5342,7 @@ input[type=submit].btn-block {
     position: relative;
     padding: .75rem 1.25rem;
     margin-bottom: 1rem;
+    margin-top: 0.5rem;
     border: 1px solid transparent;
     border-radius: .25rem
 }

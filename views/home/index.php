@@ -165,7 +165,7 @@
         // Base URL for the AJAX endpoints (contact/add, contact/delete/{id})
         var SITE_URL = "<?php echo site_url(''); ?>";
     </script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=12"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=14"></script>
 </body>
 
 </html>

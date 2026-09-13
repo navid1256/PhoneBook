@@ -56,7 +56,7 @@ initFormOutlines();
 // so cap typing at 12 digits here (validatePhone still checks the 10-12 rule)
 if (userPhoneInp) {
     userPhoneInp.addEventListener("input", function () {
-        var digits = userPhoneInp.value.replace(/\D/g, "").slice(0, 12);
+        var digits = userPhoneInp.value.replaceAll(/\D/g, "").slice(0, 12);
 
         if (userPhoneInp.value !== digits) {
             userPhoneInp.value = digits;
@@ -70,7 +70,7 @@ var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (ro
     var cells = row.getElementsByTagName("td");
 
     return {
-        id: parseInt(row.getAttribute("data-id"), 10) || 0,
+        id: Number.parseInt(row.getAttribute("data-id"), 10) || 0,
         name: cells[0].textContent.trim(),
         phone: cells[1].textContent.trim(),
         email: cells[2].textContent.trim()
@@ -80,12 +80,13 @@ var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (ro
 function escapeHtml(value)
 {
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#039;");
 }
+
 
 // POST the form to the server so the new contact is stored in the database
 function addContact()
@@ -107,7 +108,7 @@ function addContact()
                 // Reload so the table and pagination reflect the database
                 setTimeout(function () {
                     window.location.reload();
-                }, 700);
+                }, 1000);
             } else {
                 showAddStatus(data.message, false);
             }
@@ -122,7 +123,7 @@ if (addForm) {
     addForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        if (validateName() == true && validatePhone() == true && validateEmail() == true) {
+        if (validateName() && validatePhone() && validateEmail()) {
             addContact();
         } else {
             alert("please fill in the form");
@@ -148,11 +149,11 @@ function displayData()
 {
     var temp = "";
 
-    for (var i = 0; i < userContacts.length; i++) {
-        temp += "<tr data-id=\"" + userContacts[i].id + "\">" +
-            "<td class=\"name\">" + escapeHtml(userContacts[i].name) + "</td>" +
-            "<td class=\"phone\">" + escapeHtml(userContacts[i].phone) + "</td>" +
-            "<td class=\"email\">" + escapeHtml(userContacts[i].email) + "</td>" +
+    for (var contact of userContacts) {
+        temp += "<tr data-id=\"" + contact.id + "\">" +
+            "<td class=\"name\">" + escapeHtml(contact.name) + "</td>" +
+            "<td class=\"phone\">" + escapeHtml(contact.phone) + "</td>" +
+            "<td class=\"email\">" + escapeHtml(contact.email) + "</td>" +
             "<td><button onclick=\"editContact(this)\" class=\"contact-action contact-action-edit\" aria-label=\"Edit contact\" title=\"Edit\"><i class=\"fas fa-edit\"></i></button></td>" +
             "<td><button onclick=\"deleteContact(this)\" class=\"contact-action contact-action-delete\" aria-label=\"Delete contact\" title=\"Delete\"><i class=\"fas fa-trash-alt\"></i></button></td>" +
             "</tr>";
@@ -162,6 +163,7 @@ function displayData()
     searchFunction();
 }
 
+// Locate a row by returning its index in the rendered table
 function rowIndexOf(button)
 {
     var row = button.closest("tr");
@@ -176,7 +178,7 @@ function rowIndexOf(button)
 // Called from the view as deleteContact(this)
 function deleteContact(button)
 {
-    if (confirm("Are you sure you want to delete this contact ?") !== true) {
+    if (!confirm("Are you sure you want to delete this contact ?")) {
         return;
     }
 
@@ -272,7 +274,7 @@ function searchFunction()
       });
 
     var matches = contactValues.some(function (value) {
-      return value.indexOf(filter) > -1;
+      return value.includes(filter);
     });
 
     row.style.display = matches ? "" : "none";
@@ -307,8 +309,10 @@ function showAlert(id, show)
 
 function validateName()
 {
-    var regex = /^[a-zA-Z0-9]+([a-zA-Z0-9](_|-| )[a-zA-Z0-9])*[a-zA-Z0-9]+$/;
-    if(regex.test(userNameInp.value) == true)
+    // Unicode-aware: accepts Persian/Arabic/English letters and digits
+    // (matches the server, which only requires a non-empty name)
+    var regex = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u;
+    if (regex.test(userNameInp.value))
     {
         showAlert("nameAlert", false);
         return true;
@@ -326,7 +330,7 @@ function validatePhone()
     // strip non-digit characters and accept 10-12 digits.
     // Covers 10-digit local numbers, 11-digit Iranian mobile (09xxxxxxxxx),
     // and international numbers with country code.
-    var cleanedPhone = userPhoneInp.value.replace(/\D/g, "");
+    var cleanedPhone = userPhoneInp.value.replaceAll(/\D/g, "");
     var length = cleanedPhone.length;
 
     if (length >= 10 && length <= 12) {
@@ -347,9 +351,11 @@ function validateEmail()
         return true;
     }
 
-    var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    // Simple structural check (local@domain.tld) — the server-side
+    // Validator::isValidEmail uses PHP FILTER_VALIDATE_EMAIL anyway.
+    var regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     
-    if(regex.test(userEmailInp.value) == true)
+    if (regex.test(userEmailInp.value))
     {
         showAlert("mailAlert", false);
         return true;
