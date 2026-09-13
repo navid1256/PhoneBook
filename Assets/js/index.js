@@ -52,6 +52,18 @@ function initFormOutlines(scope)
 
 initFormOutlines();
 
+// The phone field accepts 10-12 digits: number inputs ignore maxlength,
+// so cap typing at 12 digits here (validatePhone still checks the 10-12 rule)
+if (userPhoneInp) {
+    userPhoneInp.addEventListener("input", function () {
+        var digits = userPhoneInp.value.replace(/\D/g, "").slice(0, 12);
+
+        if (userPhoneInp.value !== digits) {
+            userPhoneInp.value = digits;
+        }
+    });
+}
+
 
 // Client-side copy of the contacts rendered by the server
 var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (row) {

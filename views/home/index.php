@@ -17,7 +17,7 @@
 
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>" />
     <link rel="stylesheet" href="<?php echo asset_url('css/all.min.css'); ?>" />
-    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=6" />
+    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=7" />
     <link rel="stylesheet" href="<?php echo asset_url('template/searchbox/style.css'); ?>" />
 
 
@@ -63,7 +63,7 @@
                     <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
 
                     <div class="form-outline mt-3" data-mdb-input-init>
-                        <input type="number" id="userPhone" name="phone" class="form-control" max="9999999999" min="0" />
+                        <input type="number" id="userPhone" name="phone" class="form-control" min="0" max="999999999999" inputmode="numeric" />
                         <label class="form-label" for="userPhone">Phone</label>
                         <div class="form-notch">
                             <div class="form-notch-leading"></div>
@@ -165,7 +165,7 @@
         // Base URL for the AJAX endpoints (contact/add, contact/delete/{id})
         var SITE_URL = "<?php echo site_url(''); ?>";
     </script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=11"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=12"></script>
 </body>
 
 </html>

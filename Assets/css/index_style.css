@@ -161,6 +161,19 @@ body {
     box-shadow: 1px 0 0 0 #ffffff, 0 -1px 0 0 #ffffff, 0 1px 0 0 #ffffff;
 }
 
+/* Hide the native spinner arrows of number inputs (Add Contact phone
+   field) — Webkit/Blink and Firefox. */
+.inp input[type="number"]::-webkit-outer-spin-button,
+.inp input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.inp input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .alert {
     display: none;
 }
