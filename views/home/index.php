@@ -63,7 +63,7 @@
                     <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
 
                     <div class="form-outline mt-3" data-mdb-input-init>
-                        <input type="text" id="userPhone" name="phone" class="form-control" />
+                        <input type="number" id="userPhone" name="phone" class="form-control" max="9999999999" min="0" />
                         <label class="form-label" for="userPhone">Phone</label>
                         <div class="form-notch">
                             <div class="form-notch-leading"></div>
@@ -106,7 +106,7 @@
 
                     <tbody id="tableBody">
                         <?php foreach ($contacts as $contact) : ?>
-                            <tr>
+                            <tr data-id="<?php echo (int) $contact['id']; ?>">
                                 <td class="name"><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td class="phone"><?php echo htmlspecialchars($contact['phone'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td class="email"><?php echo htmlspecialchars($contact['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
@@ -161,7 +161,11 @@
     <script src="<?php echo asset_url('js/jquery-3.3.1.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/popper.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=9"></script>
+    <script>
+        // Base URL for the AJAX endpoints (contact/add, contact/delete/{id})
+        var SITE_URL = "<?php echo site_url(''); ?>";
+    </script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=11"></script>
 </body>
 
 </html>

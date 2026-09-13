@@ -58,6 +58,7 @@ var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (ro
     var cells = row.getElementsByTagName("td");
 
     return {
+        id: parseInt(row.getAttribute("data-id"), 10) || 0,
         name: cells[0].textContent.trim(),
         phone: cells[1].textContent.trim(),
         email: cells[2].textContent.trim()
@@ -136,7 +137,7 @@ function displayData()
     var temp = "";
 
     for (var i = 0; i < userContacts.length; i++) {
-        temp += "<tr>" +
+        temp += "<tr data-id=\"" + userContacts[i].id + "\">" +
             "<td class=\"name\">" + escapeHtml(userContacts[i].name) + "</td>" +
             "<td class=\"phone\">" + escapeHtml(userContacts[i].phone) + "</td>" +
             "<td class=\"email\">" + escapeHtml(userContacts[i].email) + "</td>" +
@@ -163,12 +164,45 @@ function rowIndexOf(button)
 // Called from the view as deleteContact(this)
 function deleteContact(button)
 {
+    if (confirm("Are you sure you want to delete this contact ?") !== true) {
+        return;
+    }
+
     var index = rowIndexOf(button);
 
-    if (index > -1) {
-        userContacts.splice(index, 1);
-        displayData();
+    if (index === -1) {
+        return;
     }
+
+    var contactId = userContacts[index].id;
+
+    if (!contactId) {
+        return;
+    }
+
+    // DELETE the contact on the server so it is removed from the database
+    fetch(SITE_URL + "contact/delete/" + encodeURIComponent(contactId), {
+        method: "DELETE"
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            if (data.success) {
+                // Remove the row immediately, then reload so the table
+                // and pagination reflect the database
+                userContacts.splice(index, 1);
+                displayData();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 700);
+            } else {
+                alert(data.message || "Failed to delete contact.");
+            }
+        })
+        .catch(function () {
+            alert("Could not reach the server. Please try again.");
+        });
 }
 
 // Set an MDB input value and notify its floating label

@@ -64,15 +64,25 @@ class ContactController
         }
     }
 
-    public function delete($id)
+    public function delete()
     {
         global $request;
         if ($request->method() === 'DELETE') {
+            // The router does not pass route params to the action, so read
+            // the {id} segment (e.g. /contact/delete/5) from the request.
+            $id = (int) $request->getRouteParam('id');
+
+            if ($id <= 0) {
+                echo json_encode(['success' => false, 'message' => 'Invalid contact id.']);
+                return;
+            }
+
             $deleted = $this->contactModel->delete($id);
+
             if ($deleted) {
                 echo json_encode(['success' => true, 'message' => 'Contact deleted successfully.']);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to delete contact.']);
+                echo json_encode(['success' => false, 'message' => 'Contact not found.']);
             }
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid request method.']);

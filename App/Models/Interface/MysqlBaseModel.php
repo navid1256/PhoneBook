@@ -78,9 +78,9 @@ class MysqlBaseModel extends BaseModel
     }
 
     //delete
-    public function delete(array $where): int
+    public function delete(int $id): bool
     {
-        return $this->connection->delete($this->table, $where)->rowCount();
+        return $this->connection->delete($this->table, [$this->primaryKey => $id])->rowCount() > 0;
     }
 
     //sumn
@@ -89,10 +89,10 @@ class MysqlBaseModel extends BaseModel
         return (float)$this->connection->sum($this->table, $column, $where);
     }
 
-    public function remove(): int
+    public function remove(): bool
     {
         $record_id = $this->getAttribute($this->primaryKey);
-        return $this->delete([$this->primaryKey => $record_id]);
+        return $this->delete($record_id);
     }
 
     public function save(): int

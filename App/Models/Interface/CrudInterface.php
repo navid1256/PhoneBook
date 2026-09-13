@@ -12,5 +12,5 @@ interface CrudInterface
 
     public function get(mixed $columns, array $where): array;
 
-    public function delete(array $where): int;
+    public function delete(int $id): bool;
 }
