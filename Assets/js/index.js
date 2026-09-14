@@ -227,24 +227,144 @@ function setInputValue(input, value)
     input.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
-// Called from the view as editContact(this):
-// load the row values back into the form and remove the row
+// Inline editing state: which table row is currently being edited
+var editingRow = null;
+
+// Turn the 3 value cells of a row into inputs + swap Edit/Delete for Save/Cancel
+function startEditRow(row)
+{
+    var cells = row.querySelectorAll("td");
+
+    // cells[0]=name, cells[1]=phone, cells[2]=email: keep current text as input value
+    [0, 1, 2].forEach(function (i) {
+        var input = document.createElement("input");
+
+        input.type = "text";
+        input.className = "form-control form-control-sm inline-edit";
+        input.value = cells[i].textContent.trim();
+
+        cells[i].textContent = "";
+        cells[i].appendChild(input);
+    });
+
+    // cells[3] = Edit button, cells[4] = Delete button -> Save / Cancel
+    cells[3].innerHTML = '<button onclick="saveEditedContact(this)" class="contact-action contact-action-save" aria-label="Save changes" title="Save"><i class="fas fa-check"></i></button>';
+    cells[4].innerHTML = '<button onclick="cancelEditRow(this)" class="contact-action contact-action-cancel" aria-label="Cancel editing" title="Cancel"><i class="fas fa-times"></i></button>';
+
+    editingRow = row;
+    cells[0].querySelector("input").focus();
+}
+
+// Restore the row to display mode with the given contact values
+function endEditRow(row, contact)
+{
+    var cells = row.querySelectorAll("td");
+
+    cells[0].textContent = contact.name;
+    cells[1].textContent = contact.phone;
+    cells[2].textContent = contact.email;
+
+    cells[3].innerHTML = '<button onclick="editContact(this)" class="contact-action contact-action-edit" aria-label="Edit contact" title="Edit"><i class="fas fa-edit"></i></button>';
+    cells[4].innerHTML = '<button onclick="deleteContact(this)" class="contact-action contact-action-delete" aria-label="Delete contact" title="Delete"><i class="fas fa-trash-alt"></i></button>';
+
+    editingRow = null;
+    searchFunction();
+}
+
+// Read the inline inputs of an edited row
+function readEditedRow(row)
+{
+    var inputs = row.querySelectorAll("input.inline-edit");
+
+    return {
+        name: inputs[0].value.trim(),
+        phone: inputs[1].value.trim(),
+        email: inputs[2].value.trim()
+    };
+}
+
+// Called from the view as editContact(this): start inline editing on that row
 function editContact(button)
 {
+    var row = button.closest("tr");
     var index = rowIndexOf(button);
 
     if (index === -1) {
         return;
     }
 
-    setInputValue(userNameInp, userContacts[index].name);
-    setInputValue(userPhoneInp, userContacts[index].phone);
-    setInputValue(userEmailInp, userContacts[index].email);
+    // Only one row can be edited at a time: restore any previous edited row
+    if (editingRow && editingRow !== row) {
+        var prevIndex = Array.prototype.indexOf.call(tableBody.querySelectorAll("tr"), editingRow);
 
-    userContacts.splice(index, 1);
-    displayData();
+        if (prevIndex > -1 && userContacts[prevIndex]) {
+            endEditRow(editingRow, userContacts[prevIndex]);
+        }
+    }
 
-    userNameInp.focus();
+    startEditRow(row);
+}
+
+// Called from the view as saveEditedContact(this): validate then PUT to the server
+function saveEditedContact(button)
+{
+    var row = button.closest("tr");
+    var index = rowIndexOf(button);
+
+    if (index === -1 || !userContacts[index]) {
+        return;
+    }
+
+    var contactId = userContacts[index].id;
+    var edited = readEditedRow(row);
+    var phoneDigits = edited.phone.replaceAll(/\D/g, "");
+
+    // Same rules as the Add form (validateName/validatePhone/validateEmail)
+    var nameOk = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u.test(edited.name);
+    var phoneOk = phoneDigits.length >= 10 && phoneDigits.length <= 12;
+    var emailOk = edited.email === "" || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(edited.email);
+
+    if (!nameOk || !phoneOk || !emailOk) {
+        alert("Invalid values: name must be letters, phone 10-12 digits, email a valid address.");
+        return;
+    }
+
+    fetch(SITE_URL + "contact/update/" + encodeURIComponent(contactId), {
+        method: "PUT",
+        body: new URLSearchParams({
+            name: edited.name,
+            phone: edited.phone,
+            email: edited.email
+        })
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            if (data.success) {
+                userContacts[index].name = edited.name;
+                userContacts[index].phone = phoneDigits;
+                userContacts[index].email = edited.email;
+                endEditRow(row, userContacts[index]);
+            } else {
+                alert(data.message || "Failed to update contact.");
+            }
+        })
+        .catch(function () {
+            alert("Could not reach the server. Please try again.");
+        });
+}
+
+// Called from the view as cancelEditRow(this): restore original values
+function cancelEditRow(button)
+{
+    var index = rowIndexOf(button);
+
+    if (index === -1 || !userContacts[index]) {
+        return;
+    }
+
+    endEditRow(button.closest("tr"), userContacts[index]);
 }
 
 // Only clear the "add contact" inputs, never the search box

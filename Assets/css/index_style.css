@@ -64,7 +64,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     left: 0.75rem;
-    padding-top: 0.3rem;
+    padding-top: 0.35rem;
     pointer-events: none;
     transform-origin: 0 0;
     transition: all 0.2s ease-out;
@@ -172,6 +172,24 @@ body {
 .inp input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
+}
+
+/* Inline row editing (Edit button turns the row into inputs) */
+.inline-edit {
+    min-width: 0;
+    width: 100%;
+    color: #212529;
+    background-color: #fff;
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+.contact-action-save:hover {
+    color: #28a745;
+}
+
+.contact-action-cancel:hover {
+    color: #6c757d;
 }
 
 .alert {

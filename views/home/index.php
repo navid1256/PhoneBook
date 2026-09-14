@@ -17,7 +17,7 @@
 
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>" />
     <link rel="stylesheet" href="<?php echo asset_url('css/all.min.css'); ?>" />
-    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=7" />
+    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=8" />
     <link rel="stylesheet" href="<?php echo asset_url('template/searchbox/style.css'); ?>" />
 
 
@@ -165,7 +165,7 @@
         // Base URL for the AJAX endpoints (contact/add, contact/delete/{id})
         var SITE_URL = "<?php echo site_url(''); ?>";
     </script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=14"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=15"></script>
 </body>
 
 </html>
