@@ -89,37 +89,51 @@
 
             <div class="col-lg-8">
 
-                <table id="myTable" class="table table-striped align-middle">
+                <div class="table-responsive">
+                    <table id="myTable" class="table table-striped align-middle" aria-label="Contacts list">
 
-                    <thead class="tableh1">
-                        <th class="">Name</th>
-                        <th class="">Phone</th>
-                        <th class="">E-mail</th>
-                        <th class="col-1">Edit</th>
-                        <th class="col-1">Delete</th>
-                    </thead>
+                        <thead class="tableh1">
+                            <th scope="col">Name</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">E-mail</th>
+                            <th scope="col" class="col-1">Edit</th>
+                            <th scope="col" class="col-1">Delete</th>
+                        </thead>
 
-                    <tbody id="tableBody">
-                        <?php foreach ($contacts as $contact) : ?>
-                            <tr data-id="<?php echo (int) $contact['id']; ?>">
-                                <td class="name"><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td class="phone"><?php echo htmlspecialchars($contact['phone'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td class="email"><?php echo htmlspecialchars($contact['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>
-                                    <button onclick="editContact(this)" class="contact-action contact-action-edit" aria-label="Edit contact" title="Edit">
-                                        <i href="<?= site_url("/contact/update/{$contact['id']}") ?>" class="fas fa-edit"></i>
-                                    </button>
-                                </td>
-                                <td>
-                                    <button onclick="deleteContact(this)" class="contact-action contact-action-delete" aria-label="Delete contact" title="Delete">
-                                        <i href="<?= site_url("/contact/delete/{$contact['id']}") ?>" class="fas fa-trash-alt"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
+                        <tbody id="tableBody">
+                            <?php if (empty($contacts)) : ?>
+                                <tr id="emptyTableState" class="empty-state-row">
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="far fa-address-book empty-state-icon"></i>
+                                            <p class="empty-state-title">No contacts found</p>
+                                            <span class="empty-state-desc">Add a new contact to get started.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php else : ?>
+                                <?php foreach ($contacts as $contact) : ?>
+                                    <tr data-id="<?php echo (int) $contact['id']; ?>">
+                                        <td class="name"><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td class="phone"><?php echo htmlspecialchars($contact['phone'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td class="email"><?php echo htmlspecialchars($contact['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td>
+                                            <button onclick="editContact(this)" class="contact-action contact-action-edit" aria-label="Edit contact" title="Edit">
+                                                <i href="<?= site_url("/contact/update/{$contact['id']}") ?>" class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button onclick="deleteContact(this)" class="contact-action contact-action-delete" aria-label="Delete contact" title="Delete">
+                                                <i href="<?= site_url("/contact/delete/{$contact['id']}") ?>" class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
 
-                </table>
+                    </table>
+                </div>
 
                 <nav class="pagination-nav" aria-label="Contact pages">
                     <ul class="pagination justify-content-center">

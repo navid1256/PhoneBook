@@ -205,10 +205,21 @@ if (addForm) {
     addForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        if (validateName() && validatePhone() && validateEmail()) {
+        var isNameValid = validateName();
+        var isPhoneValid = validatePhone();
+        var isEmailValid = validateEmail();
+
+        if (isNameValid && isPhoneValid && isEmailValid) {
             addContact();
         } else {
-            alert("please fill in the form");
+            showToast("Please correct the highlighted fields before submitting.", false);
+            if (!isNameValid && userNameInp) {
+                userNameInp.focus();
+            } else if (!isPhoneValid && userPhoneInp) {
+                userPhoneInp.focus();
+            } else if (!isEmailValid && userEmailInp) {
+                userEmailInp.focus();
+            }
         }
     });
 }
@@ -232,6 +243,18 @@ function showAddStatus(message, ok) {
 
 // Render rows with the exact same markup the server-side view produces
 function displayData() {
+    if (userContacts.length === 0) {
+        tableBody.innerHTML = '<tr id="emptyTableState" class="empty-state-row">' +
+            '<td colspan="5" class="text-center py-5">' +
+            '<div class="empty-state">' +
+            '<i class="far fa-address-book empty-state-icon"></i>' +
+            '<p class="empty-state-title">No contacts found</p>' +
+            '<span class="empty-state-desc">Add a new contact to get started.</span>' +
+            '</div>' +
+            '</td></tr>';
+        return;
+    }
+
     var temp = "";
 
     for (var contact of userContacts) {
@@ -316,6 +339,7 @@ var editingRow = null;
 // Turn the 3 value cells of a row into inputs + swap Edit/Delete for Save/Cancel
 function startEditRow(row) {
     var cells = row.querySelectorAll("td");
+    var fieldLabels = ["Contact name", "Phone number", "Email address"];
 
     // cells[0]=name, cells[1]=phone, cells[2]=email: keep current text as input value
     [0, 1, 2].forEach(function (i) {
@@ -324,14 +348,27 @@ function startEditRow(row) {
         input.type = "text";
         input.className = "form-control form-control-sm inline-edit";
         input.value = cells[i].textContent.trim();
+        input.setAttribute("aria-label", fieldLabels[i]);
+
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                var saveBtn = row.querySelector(".contact-action-save");
+                if (saveBtn) saveEditedContact(saveBtn);
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                var cancelBtn = row.querySelector(".contact-action-cancel");
+                if (cancelBtn) cancelEditRow(cancelBtn);
+            }
+        });
 
         cells[i].textContent = "";
         cells[i].appendChild(input);
     });
 
     // cells[3] = Edit button, cells[4] = Delete button -> Save / Cancel
-    cells[3].innerHTML = '<button onclick="saveEditedContact(this)" class="contact-action contact-action-save" aria-label="Save changes" title="Save"><i class="fas fa-check"></i></button>';
-    cells[4].innerHTML = '<button onclick="cancelEditRow(this)" class="contact-action contact-action-cancel" aria-label="Cancel editing" title="Cancel"><i class="fas fa-times"></i></button>';
+    cells[3].innerHTML = '<button onclick="saveEditedContact(this)" class="contact-action contact-action-save" aria-label="Save changes" title="Save (Enter)"><i class="fas fa-check"></i></button>';
+    cells[4].innerHTML = '<button onclick="cancelEditRow(this)" class="contact-action contact-action-cancel" aria-label="Cancel editing" title="Cancel (Esc)"><i class="fas fa-times"></i></button>';
 
     var phoneInput = cells[1].querySelector("input");
     if (phoneInput) {
@@ -467,9 +504,10 @@ function searchFunction() {
     }
 
     var filter = input.value.trim().toUpperCase();
-    var rows = document.querySelectorAll("#tableBody tr");
+    var rows = Array.from(document.querySelectorAll("#tableBody tr:not(.empty-state-row)"));
+    var visibleCount = 0;
 
-    Array.prototype.forEach.call(rows, function (row) {
+    rows.forEach(function (row) {
         var contactValues = Array.from(row.querySelectorAll("td"))
             .slice(0, 3)
             .map(function (cell) {
@@ -481,7 +519,29 @@ function searchFunction() {
         });
 
         row.style.display = matches ? "" : "none";
+        if (matches) {
+            visibleCount++;
+        }
     });
+
+    var existingEmptyRow = document.getElementById("searchEmptyRow");
+    if (visibleCount === 0 && rows.length > 0) {
+        if (!existingEmptyRow) {
+            var emptyTr = document.createElement("tr");
+            emptyTr.id = "searchEmptyRow";
+            emptyTr.className = "empty-state-row";
+            emptyTr.innerHTML = '<td colspan="5" class="text-center py-4">' +
+                '<div class="empty-state">' +
+                '<i class="fa fa-search empty-state-icon"></i>' +
+                '<p class="empty-state-title">No matching contacts found</p>' +
+                '<span class="empty-state-desc">Try searching with a different name, phone, or email.</span>' +
+                '</div>' +
+                '</td>';
+            tableBody.appendChild(emptyTr);
+        }
+    } else if (existingEmptyRow) {
+        existingEmptyRow.remove();
+    }
 }
 
 var searchInput = document.getElementById("myInput");
