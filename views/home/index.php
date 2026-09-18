@@ -34,8 +34,9 @@
 
             <form id="searchForm" method="get" action="" class="wrap">
                 <div class="search">
-                    <input type="text" id="myInput" class="searchTerm" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="What Contact are you looking for?">
-                    <button type="submit" class="searchButton">
+                    <label for="myInput" class="sr-only">Search contacts</label>
+                    <input type="text" id="myInput" class="searchTerm" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="What Contact are you looking for?" aria-label="Search contacts">
+                    <button type="submit" class="searchButton" aria-label="Search">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
