@@ -275,68 +275,148 @@ body {
     text-wrap: balance;
 }
 
-/* Modern Floating Input Groups */
+/* ------------------------------------------------------------------
+   Material Form Outline Inputs (Interactive Notched Outline)
+   When clicked/focused or holding a value, the label translates
+   onto the top outline notch, seamlessly integrated with theme tokens.
+   ------------------------------------------------------------------ */
 .inp .form-outline {
     position: relative;
-    margin-top: 18px;
+    margin-top: 20px;
 }
 
 .inp .form-outline .form-control {
-    width: 100%;
-    height: 48px;
-    padding: 16px 14px 4px 14px;
+    min-height: auto;
+    height: 44px;
+    padding: 0.55rem 0.75rem;
+    border: 0;
     background-color: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: 8px;
     color: var(--input-text);
-    font-size: 15px;
-    transition: all 0.2s ease;
+    transition: all 0.2s linear;
+    border-radius: 8px;
     outline: none;
     box-shadow: none !important;
 }
 
 .inp .form-outline .form-control:focus {
-    border-color: var(--input-focus-border);
-    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2) !important;
+    box-shadow: none !important;
+    background-color: var(--input-bg);
+    color: var(--input-text);
 }
 
 .inp .form-outline .form-label {
     position: absolute;
-    top: 14px;
-    left: 14px;
-    color: var(--label-text);
-    font-size: 14px;
+    top: 0;
+    max-width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    left: 0.75rem;
+    padding-top: 0.58rem;
     pointer-events: none;
-    transition: all 0.2s ease;
-    margin: 0;
+    transform-origin: 0 0;
+    transition: all 0.2s ease-out;
+    color: var(--label-text);
+    font-size: 16px;
+    margin-bottom: 0;
 }
 
-/* Float label on active, focus, or when input has content */
-.inp .form-outline .form-control.active ~ .form-label,
-.inp .form-outline .form-control:focus ~ .form-label,
-.inp .form-outline .form-control:not(:placeholder-shown) ~ .form-label {
-    top: 4px;
-    font-size: 11px;
+.inp .form-outline .form-control~.form-notch {
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    text-align: left;
+    pointer-events: none;
+}
+
+.inp .form-outline .form-control~.form-notch div {
+    pointer-events: none;
+    border: 1px solid var(--input-border);
+    box-sizing: border-box;
+    background: transparent;
+    transition: all 0.2s linear;
+}
+
+.inp .form-outline .form-control~.form-notch .form-notch-leading {
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0.5rem;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.inp .form-outline .form-control~.form-notch .form-notch-middle {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: calc(100% - 1rem);
+    height: 100%;
+    border-right: none;
+    border-left: none;
+}
+
+.inp .form-outline .form-control~.form-notch .form-notch-trailing {
+    flex-grow: 1;
+    height: 100%;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+}
+
+/* The label floats onto the outline border when focused or holds a value (.active) */
+.inp .form-outline .form-control.active~.form-label,
+.inp .form-outline .form-control:focus~.form-label {
+    transform: translateY(-1.15rem) translateY(0.1rem) scale(0.8);
     font-weight: 600;
+}
+
+.inp .form-outline .form-control:focus~.form-label {
     color: var(--accent);
 }
 
-.inp .form-outline .form-control:not(:focus):not(:placeholder-shown) ~ .form-label {
-    color: var(--label-text);
+.inp .form-outline .form-control.active~.form-notch .form-notch-middle,
+.inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-right: none;
+    border-left: none;
+    border-top: 1px solid transparent;
 }
 
-/* Modern Validation Pseudo-class */
-.inp .form-outline .form-control:user-invalid {
+.inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 1px 0 0 var(--input-focus-border);
+    border-top: 1px solid transparent;
+}
+
+.inp .form-outline .form-control.active~.form-notch .form-notch-leading,
+.inp .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-right: none;
+}
+
+.inp .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-color: var(--input-focus-border);
+    box-shadow: -1px 0 0 0 var(--input-focus-border), 0 1px 0 0 var(--input-focus-border), 0 -1px 0 0 var(--input-focus-border);
+}
+
+.inp .form-outline .form-control.active~.form-notch .form-notch-trailing,
+.inp .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-left: none;
+}
+
+.inp .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-color: var(--input-focus-border);
+    box-shadow: 1px 0 0 0 var(--input-focus-border), 0 -1px 0 0 var(--input-focus-border), 0 1px 0 0 var(--input-focus-border);
+}
+
+/* Validation Pseudo-classes */
+.inp .form-outline .form-control:user-invalid~.form-notch div {
     border-color: #ef4444;
 }
 
-.inp .form-outline .form-control:user-invalid ~ .form-label {
+.inp .form-outline .form-control:user-invalid~.form-label {
     color: #ef4444;
-}
-
-/* Hide legacy notch divs since clean CSS handles borders */
-.inp .form-notch {
-    display: none !important;
 }
 
 /* Hide native spinner arrows of number inputs */
@@ -623,6 +703,7 @@ footer {
         opacity: 0;
         transform: translateY(15px) scale(0.96);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -634,10 +715,6 @@ footer {
    ------------------------------------------------------------------ */
 
 /* Accessibility: High-contrast focus rings for keyboard navigation */
-:focus-visible {
-    outline: 2px solid var(--accent) !important;
-    outline-offset: 2px !important;
-}
 
 button:focus:not(:focus-visible),
 a:focus:not(:focus-visible),

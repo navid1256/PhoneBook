@@ -24,6 +24,10 @@ function getCurrentTheme() {
 function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.bsTheme = theme;
+    var metaScheme = document.querySelector('meta[name="color-scheme"]');
+    if (metaScheme) {
+        metaScheme.content = theme;
+    }
     localStorage.setItem("phonebook-theme", theme);
     if (themeIcon) {
         if (theme === "light") {
@@ -76,6 +80,48 @@ function showToast(message, ok) {
         }, 300);
     }, 3500);
 }
+
+/* --- Material Form Outline Behavior (Interactive Notched Outline) -----
+   Calculates the notch cutout width to match the floating label,
+   and manages the `.active` class when fields contain text or are focused.
+   ------------------------------------------------------------------ */
+function updateFormOutline(input) {
+    if (!input) return;
+    var wrapper = input.closest(".form-outline");
+    if (!wrapper) return;
+
+    var label = wrapper.querySelector(".form-label");
+    var notchMiddle = wrapper.querySelector(".form-notch-middle");
+
+    if (input.value && input.value.trim() !== "") {
+        input.classList.add("active");
+    } else {
+        input.classList.remove("active");
+    }
+
+    if (label && notchMiddle) {
+        notchMiddle.style.width = (label.clientWidth * 0.8 + 8) + "px";
+    }
+}
+
+function initFormOutlines(scope) {
+    var inputs = (scope || document).querySelectorAll(".form-outline .form-control");
+    Array.prototype.forEach.call(inputs, function (input) {
+        updateFormOutline(input);
+
+        input.addEventListener("input", function () {
+            updateFormOutline(input);
+        });
+        input.addEventListener("focus", function () {
+            updateFormOutline(input);
+        });
+        input.addEventListener("blur", function () {
+            updateFormOutline(input);
+        });
+    });
+}
+
+initFormOutlines();
 
 /**
  * Attach strict numeric-only and length restrictions to phone inputs.
@@ -325,10 +371,11 @@ function deleteContact(button) {
 }
 
 // Set an MDB input value and notify its floating label
-// (MDB only reacts to real events, not to direct .value assignment)
 function setInputValue(input, value) {
+    if (!input) return;
     input.value = value;
     input.dispatchEvent(new Event("input", { bubbles: true }));
+    updateFormOutline(input);
 }
 
 // Inline editing state: which table row is currently being edited

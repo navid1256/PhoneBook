@@ -23,8 +23,10 @@
             if (!theme) {
                 theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
             }
-            document.documentElement.setAttribute("data-theme", theme);
-            document.documentElement.setAttribute("data-bs-theme", theme);
+            document.documentElement.dataset.theme = theme;
+            document.documentElement.dataset.bsTheme = theme;
+            var metaScheme = document.querySelector('meta[name="color-scheme"]');
+            if (metaScheme) metaScheme.content = theme;
         })();
     </script>
 
@@ -48,7 +50,8 @@
 
             <form id="searchForm" method="get" action="" class="wrap">
                 <div class="search">
-                    <input type="text" id="myInput" class="searchTerm" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="What Contact are you looking for?">
+                    <label for="myInput" class="visually-hidden">Search contacts</label>
+                    <input type="text" id="myInput" class="searchTerm" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="What Contact are you looking for?" aria-label="Search contacts" autocomplete="off" spellcheck="false">
                     <button type="submit" class="searchButton" aria-label="Search">
                         <i class="fa fa-search"></i>
                     </button>
@@ -64,20 +67,35 @@
 
                 <form id="addForm" method="post" action="<?php echo site_url('contact/add'); ?>">
                     <div class="form-outline mt-3">
-                        <input type="text" id="userName" name="name" class="form-control" placeholder=" " />
+                        <input type="text" id="userName" name="name" class="form-control" autocomplete="name" />
                         <label class="form-label" for="userName">Name</label>
+                        <div class="form-notch">
+                            <div class="form-notch-leading"></div>
+                            <div class="form-notch-middle"></div>
+                            <div class="form-notch-trailing"></div>
+                        </div>
                     </div>
                     <div id="nameAlert" class="alert alert-danger p-2">Please add name</div>
 
                     <div class="form-outline mt-3">
-                        <input type="number" id="userPhone" name="phone" class="form-control" min="0" max="999999999999" inputmode="numeric" placeholder=" " />
+                        <input type="number" id="userPhone" name="phone" class="form-control" min="0" max="999999999999" inputmode="numeric" autocomplete="tel" />
                         <label class="form-label" for="userPhone">Phone</label>
+                        <div class="form-notch">
+                            <div class="form-notch-leading"></div>
+                            <div class="form-notch-middle"></div>
+                            <div class="form-notch-trailing"></div>
+                        </div>
                     </div>
                     <div id="phoneAlert" class="alert alert-danger p-2">Please add a valid number</div>
 
                     <div class="form-outline mt-3">
-                        <input type="text" id="userEmail" name="email" class="form-control" placeholder=" " />
+                        <input type="text" id="userEmail" name="email" class="form-control" autocomplete="email" />
                         <label class="form-label" for="userEmail">E-mail (optional)</label>
+                        <div class="form-notch">
+                            <div class="form-notch-leading"></div>
+                            <div class="form-notch-middle"></div>
+                            <div class="form-notch-trailing"></div>
+                        </div>
                     </div>
                     <div id="mailAlert" class="alert alert-danger p-2">Please add a valid e-mail</div>
                     <div id="addStatus" class="alert alert-danger p-2"></div>
