@@ -22,8 +22,8 @@ function getCurrentTheme() {
 }
 
 function applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-    document.documentElement.setAttribute("data-bs-theme", theme);
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.bsTheme = theme;
     localStorage.setItem("phonebook-theme", theme);
     if (themeIcon) {
         if (theme === "light") {
@@ -72,9 +72,7 @@ function showToast(message, ok) {
     setTimeout(function () {
         toast.classList.add("toast-hide");
         setTimeout(function () {
-            if (toast.parentNode) {
-                toast.parentNode.removeChild(toast);
-            }
+            toast.remove();
         }, 300);
     }, 3500);
 }
@@ -372,7 +370,7 @@ function startEditRow(row) {
 
     var phoneInput = cells[1].querySelector("input");
     if (phoneInput) {
-        phoneInput.setAttribute("max", "999999999999");
+        phoneInput.max = "999999999999";
         phoneInput.inputMode = "numeric";
         attachPhoneInputRestrictions(phoneInput);
     }
