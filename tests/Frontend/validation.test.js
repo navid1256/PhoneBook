@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 // Pure logic extracted from Assets/js/index.js for unit testing
 function isValidName(name) {
-    var regex = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u;
+    var regex = /^[\p{L}\p{N}]+(?:[ _-][\p{L}\p{N}]+)*$/u;
     return regex.test((name || '').trim());
 }
 
@@ -15,7 +15,7 @@ function isValidPhone(phone) {
 function isValidEmail(email) {
     var trimmed = (email || '').trim();
     if (trimmed === '') return true; // Optional field
-    var regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    var regex = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
     return regex.test(trimmed);
 }
 

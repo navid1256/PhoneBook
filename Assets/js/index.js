@@ -76,7 +76,7 @@ function attachPhoneInputRestrictions(input) {
             "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
             "Home", "End"
         ];
-        if (allowedKeys.indexOf(e.key) !== -1) {
+        if (allowedKeys.includes(e.key)) {
             return;
         }
 
@@ -87,7 +87,7 @@ function attachPhoneInputRestrictions(input) {
 
         // Strictly block any key that is not a numeric digit (0-9)
         // (This prevents typing 'e', 'E', '+', '-', '.', and any letters/symbols)
-        if (!/^[0-9]$/.test(e.key)) {
+        if (!/^\d$/.test(e.key)) {
             e.preventDefault();
             return;
         }
@@ -131,11 +131,11 @@ attachPhoneInputRestrictions(userPhoneInp);
 
 function escapeHtml(value) {
     return String(value == null ? "" : value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
 function setInputValue(input, value) {
@@ -175,7 +175,7 @@ function clearData() {
 }
 
 function validateName() {
-    var regex = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u;
+    var regex = /^[\p{L}\p{N}]+(?:[ _-][\p{L}\p{N}]+)*$/u;
     if (regex.test(userNameInp.value.trim())) {
         showAlert("nameAlert", false);
         return true;
@@ -200,7 +200,7 @@ function validateEmail() {
         showAlert("mailAlert", false);
         return true;
     }
-    var regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    var regex = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
     if (regex.test(userEmailInp.value.trim())) {
         showAlert("mailAlert", false);
         return true;
@@ -253,8 +253,7 @@ function renderTable(contacts, totalCount) {
     }
 
     var html = "";
-    for (var i = 0; i < contacts.length; i++) {
-        var contact = contacts[i];
+    for (const contact of contacts) {
         html += '<tr data-id="' + contact.id + '">' +
             '<td class="name">' + escapeHtml(contact.name) + '</td>' +
             '<td class="phone">' + escapeHtml(contact.phone) + '</td>' +
@@ -460,9 +459,9 @@ async function saveEditedContact(button) {
     var edited = readEditedRow(row);
     var phoneDigits = edited.phone.replace(/\D/g, "");
 
-    var nameOk = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u.test(edited.name);
+    var nameOk = /^[\p{L}\p{N}]+(?:[ _-][\p{L}\p{N}]+)*$/u.test(edited.name);
     var phoneOk = phoneDigits.length >= 10 && phoneDigits.length <= 12;
-    var emailOk = edited.email === "" || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(edited.email);
+    var emailOk = edited.email === "" || /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(edited.email);
 
     if (!nameOk || !phoneOk || !emailOk) {
         alert("Invalid values: name must contain letters/digits, phone must be 10-12 digits, and email must be valid.");

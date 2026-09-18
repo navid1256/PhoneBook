@@ -14,7 +14,7 @@ function simulatePhoneKeydown(key, currentDigits, isSelected = false, maxLen = 1
     }
 
     // Must be digit 0-9
-    if (!/^[0-9]$/.test(key)) {
+    if (!/^\d$/.test(key)) {
         return { allowed: false, reason: 'non_digit' };
     }
 
