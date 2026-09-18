@@ -8,59 +8,145 @@ var addForm = document.getElementById("addForm");
 var addStatus = document.getElementById("addStatus");
 
 
-/* --- Material form-outline behavior (MDB UI-Kit 4.2.0 replica) --------
-   Adds the `.active` class while a field holds a value and sizes the
-   notch "middle" segment to its label width — the same job mdb.min.js
-   does on the 7Auth register page. Reacts to the bubbled "input"
-   events that setInputValue() dispatches, so programmatic fills
-   (editContact) also float the labels. Scoped to .form-outline only.
+/* --- Theme Management (Dark / Light Mode) -------------------------
+   Persists preference in localStorage and synchronizes icon and theme
+   attribute on <html>. Follows modern-web-guidance.
    ------------------------------------------------------------------ */
-function updateFormOutline(input) {
-    var wrapper = input.closest(".form-outline");
+var themeToggleBtn = document.getElementById("themeToggle");
+var themeIcon = document.getElementById("themeIcon");
 
-    if (!wrapper) {
-        return;
-    }
+function getCurrentTheme() {
+    var saved = localStorage.getItem("phonebook-theme");
+    if (saved) return saved;
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
 
-    var label = wrapper.querySelector(".form-label");
-    var notchMiddle = wrapper.querySelector(".form-notch-middle");
-
-    if (input.value !== "") {
-        input.classList.add("active");
-    } else {
-        input.classList.remove("active");
-    }
-
-    if (label && notchMiddle) {
-        notchMiddle.style.width = label.clientWidth + "px";
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.setAttribute("data-bs-theme", theme);
+    localStorage.setItem("phonebook-theme", theme);
+    if (themeIcon) {
+        if (theme === "light") {
+            themeIcon.classList.remove("fa-moon");
+            themeIcon.classList.add("fa-sun");
+        } else {
+            themeIcon.classList.remove("fa-sun");
+            themeIcon.classList.add("fa-moon");
+        }
     }
 }
 
-function initFormOutlines(scope) {
-    var inputs = (scope || document).querySelectorAll(".form-outline .form-control");
-
-    Array.prototype.forEach.call(inputs, function (input) {
-        updateFormOutline(input);
-
-        input.addEventListener("input", function () {
-            updateFormOutline(input);
-        });
+if (themeToggleBtn) {
+    applyTheme(getCurrentTheme());
+    themeToggleBtn.addEventListener("click", function () {
+        var current = getCurrentTheme();
+        var next = current === "dark" ? "light" : "dark";
+        applyTheme(next);
     });
 }
 
-initFormOutlines();
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
+    if (!localStorage.getItem("phonebook-theme")) {
+        applyTheme(e.matches ? "dark" : "light");
+    }
+});
 
-// The phone field accepts 10-12 digits: number inputs ignore maxlength,
-// so cap typing at 12 digits here (validatePhone still checks the 10-12 rule)
-if (userPhoneInp) {
-    userPhoneInp.addEventListener("input", function () {
-        var digits = userPhoneInp.value.replaceAll(/\D/g, "").slice(0, 12);
+/* --- Floating Toast Notification Manager --------------------------- */
+function showToast(message, ok) {
+    var container = document.getElementById("toastContainer");
+    if (!container) return;
 
-        if (userPhoneInp.value !== digits) {
-            userPhoneInp.value = digits;
+    var toast = document.createElement("div");
+    toast.className = "toast-item " + (ok ? "toast-success" : "toast-error");
+
+    var icon = document.createElement("i");
+    icon.className = "fas " + (ok ? "fa-check-circle" : "fa-exclamation-circle");
+
+    var text = document.createElement("span");
+    text.textContent = message;
+
+    toast.appendChild(icon);
+    toast.appendChild(text);
+    container.appendChild(toast);
+
+    setTimeout(function () {
+        toast.classList.add("toast-hide");
+        setTimeout(function () {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3500);
+}
+
+/**
+ * Attach strict numeric-only and length restrictions to phone inputs.
+ */
+function attachPhoneInputRestrictions(input) {
+    if (!input) return;
+
+    var maxLen = 12;
+    if (input.hasAttribute("max")) {
+        var maxAttr = input.getAttribute("max");
+        if (maxAttr && maxAttr.length > 0) {
+            maxLen = maxAttr.length;
+        }
+    }
+
+    input.addEventListener("keydown", function (e) {
+        var allowedKeys = [
+            "Backspace", "Tab", "Enter", "Escape", "Delete",
+            "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
+            "Home", "End"
+        ];
+        if (allowedKeys.includes(e.key)) {
+            return;
+        }
+
+        if (e.ctrlKey || e.metaKey) {
+            return;
+        }
+
+        if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
+            return;
+        }
+
+        var isSelected = false;
+        try {
+            if (typeof input.selectionStart === "number" && typeof input.selectionEnd === "number") {
+                isSelected = input.selectionStart !== input.selectionEnd;
+            }
+        } catch (err) {
+            isSelected = false;
+        }
+
+        var currentDigits = input.value.replace(/\D/g, "");
+        if (!isSelected && currentDigits.length >= maxLen) {
+            e.preventDefault();
+        }
+    });
+
+    input.addEventListener("paste", function (e) {
+        e.preventDefault();
+        var paste = (e.clipboardData || window.clipboardData).getData("text") || "";
+        var cleanPaste = paste.replace(/\D/g, "");
+        var currentDigits = input.value.replace(/\D/g, "");
+        var combined = (currentDigits + cleanPaste).slice(0, maxLen);
+        input.value = combined;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    input.addEventListener("input", function () {
+        var digits = input.value.replace(/\D/g, "").slice(0, maxLen);
+        if (input.value !== digits) {
+            input.value = digits;
         }
     });
 }
+
+// Attach phone restrictions
+attachPhoneInputRestrictions(userPhoneInp);
 
 
 // Client-side copy of the contacts rendered by the server
@@ -127,16 +213,21 @@ if (addForm) {
     });
 }
 
-// Show server responses (success / error) under the add-contact form
+// Show server responses (success / error) using floating toasts and alert box
 function showAddStatus(message, ok) {
-    if (!addStatus) {
-        return;
-    }
+    showToast(message, ok);
+    if (addStatus) {
+        addStatus.textContent = message;
+        addStatus.classList.remove("alert-danger", "alert-success");
+        addStatus.classList.add(ok ? "alert-success" : "alert-danger");
+        addStatus.style.display = "block";
 
-    addStatus.textContent = message;
-    addStatus.classList.remove("alert-danger", "alert-success");
-    addStatus.classList.add(ok ? "alert-success" : "alert-danger");
-    addStatus.style.display = "block";
+        if (ok) {
+            setTimeout(function () {
+                addStatus.style.display = "none";
+            }, 3000);
+        }
+    }
 }
 
 // Render rows with the exact same markup the server-side view produces
@@ -199,15 +290,16 @@ function deleteContact(button) {
                 // and pagination reflect the database
                 userContacts.splice(index, 1);
                 displayData();
+                showToast(data.message || "Contact deleted successfully", true);
                 setTimeout(function () {
                     window.location.reload();
                 }, 700);
             } else {
-                alert(data.message || "Failed to delete contact.");
+                showToast(data.message || "Failed to delete contact.", false);
             }
         })
         .catch(function () {
-            alert("Could not reach the server. Please try again.");
+            showToast("Could not reach the server. Please try again.", false);
         });
 }
 
@@ -240,6 +332,13 @@ function startEditRow(row) {
     // cells[3] = Edit button, cells[4] = Delete button -> Save / Cancel
     cells[3].innerHTML = '<button onclick="saveEditedContact(this)" class="contact-action contact-action-save" aria-label="Save changes" title="Save"><i class="fas fa-check"></i></button>';
     cells[4].innerHTML = '<button onclick="cancelEditRow(this)" class="contact-action contact-action-cancel" aria-label="Cancel editing" title="Cancel"><i class="fas fa-times"></i></button>';
+
+    var phoneInput = cells[1].querySelector("input");
+    if (phoneInput) {
+        phoneInput.setAttribute("max", "999999999999");
+        phoneInput.inputMode = "numeric";
+        attachPhoneInputRestrictions(phoneInput);
+    }
 
     editingRow = row;
     cells[0].querySelector("input").focus();
@@ -311,7 +410,7 @@ function saveEditedContact(button) {
     var emailOk = edited.email === "" || /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(edited.email);
 
     if (!nameOk || !phoneOk || !emailOk) {
-        alert("Invalid values: name must be letters, phone 10-12 digits, email a valid address.");
+        showToast("Invalid values: name must be letters, phone 10-12 digits, email a valid address.", false);
         return;
     }
 
@@ -332,12 +431,13 @@ function saveEditedContact(button) {
                 userContacts[index].phone = phoneDigits;
                 userContacts[index].email = edited.email;
                 endEditRow(row, userContacts[index]);
+                showToast(data.message || "Contact updated successfully", true);
             } else {
-                alert(data.message || "Failed to update contact.");
+                showToast(data.message || "Failed to update contact.", false);
             }
         })
         .catch(function () {
-            alert("Could not reach the server. Please try again.");
+            showToast("Could not reach the server. Please try again.", false);
         });
 }
 

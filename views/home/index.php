@@ -13,88 +13,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>Phone Book</title>
 
-    <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>" />
+    <script>
+        // Anti-FOUC (Flash of Unstyled Content) theme initialization
+        (function() {
+            var theme = localStorage.getItem("phonebook-theme");
+            if (!theme) {
+                theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+            }
+            document.documentElement.setAttribute("data-theme", theme);
+            document.documentElement.setAttribute("data-bs-theme", theme);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>?v=5" />
     <link rel="stylesheet" href="<?php echo asset_url('css/all.min.css'); ?>" />
-    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=8" />
+    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=26" />
     <link rel="stylesheet" href="<?php echo asset_url('template/searchbox/style.css'); ?>" />
-
-
 </head>
 
 <body>
 
+    <div class="jum">
 
-
-    <div class="jumbotron jum">
-
-        <div class=" navbar">
-            <h3>Phone Book <i class="far fa-address-book"></i></h3>
+        <div class="navbar">
+            <div class="brand-section">
+                <h3>Phone Book <i class="far fa-address-book"></i></h3>
+                <button id="themeToggle" class="theme-toggle-btn" type="button" aria-label="Toggle dark and light theme" title="Toggle theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
 
             <form id="searchForm" method="get" action="" class="wrap">
                 <div class="search">
                     <input type="text" id="myInput" class="searchTerm" name="search" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>" placeholder="What Contact are you looking for?">
-                    <button type="submit" class="searchButton">
+                    <button type="submit" class="searchButton" aria-label="Search">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
             </form>
         </div>
 
-
         <div class="row">
-
 
             <div class="col-lg-4 inp">
 
                 <h5 class="mt-2">Add New Contact</h5>
 
                 <form id="addForm" method="post" action="<?php echo site_url('contact/add'); ?>">
-                    <div class="form-outline mt-3" data-mdb-input-init>
-                        <input type="text" id="userName" name="name" class="form-control" />
+                    <div class="form-outline mt-3">
+                        <input type="text" id="userName" name="name" class="form-control" placeholder=" " />
                         <label class="form-label" for="userName">Name</label>
-                        <div class="form-notch">
-                            <div class="form-notch-leading"></div>
-                            <div class="form-notch-middle"></div>
-                            <div class="form-notch-trailing"></div>
-                        </div>
                     </div>
-                    <div id="nameAlert" class="alert alert-danger text-justify p-2 ">Please add name</div>
+                    <div id="nameAlert" class="alert alert-danger p-2">Please add name</div>
 
-                    <div class="form-outline mt-3" data-mdb-input-init>
-                        <input type="number" id="userPhone" name="phone" class="form-control" min="0" max="999999999999" inputmode="numeric" />
+                    <div class="form-outline mt-3">
+                        <input type="number" id="userPhone" name="phone" class="form-control" min="0" max="999999999999" inputmode="numeric" placeholder=" " />
                         <label class="form-label" for="userPhone">Phone</label>
-                        <div class="form-notch">
-                            <div class="form-notch-leading"></div>
-                            <div class="form-notch-middle"></div>
-                            <div class="form-notch-trailing"></div>
-                        </div>
                     </div>
-                    <div id="phoneAlert" class="alert alert-danger text-justify p-2 ">Please add a valid number</div>
+                    <div id="phoneAlert" class="alert alert-danger p-2">Please add a valid number</div>
 
-                    <div class="form-outline mt-3" data-mdb-input-init>
-                        <input type="text" id="userEmail" name="email" class="form-control" />
+                    <div class="form-outline mt-3">
+                        <input type="text" id="userEmail" name="email" class="form-control" placeholder=" " />
                         <label class="form-label" for="userEmail">E-mail (optional)</label>
-                        <div class="form-notch">
-                            <div class="form-notch-leading"></div>
-                            <div class="form-notch-middle"></div>
-                            <div class="form-notch-trailing"></div>
-                        </div>
                     </div>
-                    <div id="mailAlert" class="alert alert-danger text-justify p-2 ">Please add a valid e-mail</div>
-                    <div id="addStatus" class="alert alert-danger text-justify p-2 "></div>
+                    <div id="mailAlert" class="alert alert-danger p-2">Please add a valid e-mail</div>
+                    <div id="addStatus" class="alert alert-danger p-2"></div>
 
                     <button type="submit" class="btn btn-info w-100 btn1">Add</button>
                 </form>
 
-
             </div>
-
 
             <div class="col-lg-8">
 
-                <table id="myTable" class="table text-justify table-striped">
+                <table id="myTable" class="table table-striped align-middle">
 
                     <thead class="tableh1">
                         <th class="">Name</th>
@@ -122,9 +117,6 @@
                                 </td>
                             </tr>
                         <?php endforeach; ?>
-
-
-
                     </tbody>
 
                 </table>
@@ -154,18 +146,17 @@
         </div>
     </div>
 
-
+    <!-- Floating Toast Notification Container -->
+    <div id="toastContainer" aria-live="polite"></div>
 
     <footer class="text-center">Navid Ahmadzade 2019.All rights reserved</footer>
 
-    <script src="<?php echo asset_url('js/jquery-3.3.1.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/popper.min.js'); ?>"></script>
-    <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
+    <script src="<?php echo asset_url('js/bootstrap.bundle.min.js'); ?>?v=5"></script>
     <script>
         // Base URL for the AJAX endpoints (contact/add, contact/delete/{id})
         var SITE_URL = "<?php echo site_url(''); ?>";
     </script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=15"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=26"></script>
 </body>
 
 </html>

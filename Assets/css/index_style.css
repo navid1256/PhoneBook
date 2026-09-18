@@ -1,168 +1,303 @@
+/* ------------------------------------------------------------------
+   PhoneBook Modern Stylesheet (Modern Web Guidance & Baseline Standards)
+   Features:
+   - Full Dark / Light mode with CSS custom properties & color-scheme
+   - Glassmorphism container with backdrop-filter
+   - Modern floating labels & interactive form states
+   - Floating Toast notifications
+   - Typography balancing (text-wrap: balance)
+   - Baseline custom scrollbars
+   ------------------------------------------------------------------ */
+
+:root {
+    color-scheme: light dark;
+
+    /* Dark Theme Tokens (Default) */
+    --bg-gradient: radial-gradient(circle at 80% 20%, #1e293b 0%, #0f172a 70%);
+    --body-text: #f8fafc;
+    --jum-bg: rgba(30, 41, 59, 0.72);
+    --jum-border: rgba(255, 255, 255, 0.12);
+    --jum-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+    --card-subtle-bg: rgba(15, 23, 42, 0.55);
+    --input-bg: rgba(15, 23, 42, 0.65);
+    --input-border: rgba(255, 255, 255, 0.18);
+    --input-focus-border: #06b6d4;
+    --input-text: #f8fafc;
+    --label-text: #94a3b8;
+
+    --accent: #06b6d4;
+    --accent-hover: #0891b2;
+    --accent-text: #ffffff;
+
+    --table-text: #f8fafc;
+    --table-stripe-bg: rgba(255, 255, 255, 0.025);
+    --table-hover-bg: rgba(6, 182, 212, 0.1);
+    --table-header-bg: rgba(15, 23, 42, 0.75);
+    --table-border: rgba(255, 255, 255, 0.08);
+
+    --pagination-bg: rgba(15, 23, 42, 0.65);
+    --pagination-border: rgba(255, 255, 255, 0.18);
+    --pagination-text: #f8fafc;
+    --pagination-active-bg: #06b6d4;
+
+    --scrollbar-thumb: rgba(6, 182, 212, 0.4);
+    --scrollbar-track: rgba(15, 23, 42, 0.3);
+
+    --toast-bg: rgba(15, 23, 42, 0.9);
+    --toast-border: rgba(255, 255, 255, 0.15);
+    --toast-text: #f8fafc;
+
+    accent-color: var(--accent);
+}
+
+/* Explicit Light Theme (when toggled) */
+[data-theme="light"] {
+    color-scheme: light;
+    --bg-gradient: radial-gradient(circle at 80% 20%, #e2e8f0 0%, #f8fafc 70%);
+    --body-text: #0f172a;
+    --jum-bg: rgba(255, 255, 255, 0.85);
+    --jum-border: rgba(0, 0, 0, 0.08);
+    --jum-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
+
+    --card-subtle-bg: rgba(241, 245, 249, 0.85);
+    --input-bg: rgba(255, 255, 255, 0.95);
+    --input-border: rgba(0, 0, 0, 0.18);
+    --input-focus-border: #0891b2;
+    --input-text: #0f172a;
+    --label-text: #64748b;
+
+    --accent: #0891b2;
+    --accent-hover: #0e7490;
+    --accent-text: #ffffff;
+
+    --table-text: #0f172a;
+    --table-stripe-bg: rgba(0, 0, 0, 0.02);
+    --table-hover-bg: rgba(8, 145, 178, 0.07);
+    --table-header-bg: rgba(241, 245, 249, 0.92);
+    --table-border: rgba(0, 0, 0, 0.08);
+
+    --pagination-bg: #ffffff;
+    --pagination-border: rgba(0, 0, 0, 0.18);
+    --pagination-text: #0f172a;
+    --pagination-active-bg: #0891b2;
+
+    --scrollbar-thumb: rgba(8, 145, 178, 0.4);
+    --scrollbar-track: rgba(241, 245, 249, 0.6);
+
+    --toast-bg: rgba(255, 255, 255, 0.95);
+    --toast-border: rgba(0, 0, 0, 0.12);
+    --toast-text: #0f172a;
+}
+
+/* System-level preference fallback */
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+        color-scheme: light;
+        --bg-gradient: radial-gradient(circle at 80% 20%, #e2e8f0 0%, #f8fafc 70%);
+        --body-text: #0f172a;
+        --jum-bg: rgba(255, 255, 255, 0.85);
+        --jum-border: rgba(0, 0, 0, 0.08);
+        --jum-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
+
+        --card-subtle-bg: rgba(241, 245, 249, 0.85);
+        --input-bg: rgba(255, 255, 255, 0.95);
+        --input-border: rgba(0, 0, 0, 0.18);
+        --input-focus-border: #0891b2;
+        --input-text: #0f172a;
+        --label-text: #64748b;
+
+        --accent: #0891b2;
+        --accent-hover: #0e7490;
+        --accent-text: #ffffff;
+
+        --table-text: #0f172a;
+        --table-stripe-bg: rgba(0, 0, 0, 0.02);
+        --table-hover-bg: rgba(8, 145, 178, 0.07);
+        --table-header-bg: rgba(241, 245, 249, 0.92);
+        --table-border: rgba(0, 0, 0, 0.08);
+
+        --pagination-bg: #ffffff;
+        --pagination-border: rgba(0, 0, 0, 0.18);
+        --pagination-text: #0f172a;
+        --pagination-active-bg: #0891b2;
+
+        --scrollbar-thumb: rgba(8, 145, 178, 0.4);
+        --scrollbar-track: rgba(241, 245, 249, 0.6);
+
+        --toast-bg: rgba(255, 255, 255, 0.95);
+        --toast-border: rgba(0, 0, 0, 0.12);
+        --toast-text: #0f172a;
+    }
+}
+
+/* Base Body Styles */
 body {
-    color: aliceblue;
-    background-size: cover;
+    min-height: 100vh;
+    color: var(--body-text);
+    background: var(--bg-gradient);
     background-attachment: fixed;
-    background-image: url("../images/backgrounds-blank-blue-953214.jpg");
+    background-size: cover;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
+    transition: background 0.3s ease, color 0.3s ease;
+    margin: 0;
+    padding: 0;
 }
 
-
+/* Glassmorphism Main Container */
 .jum {
-    padding: 30px 30px;
-    width: 90%;
-    margin: auto;
-    background-color: rgba(0, 0, 0, 0.3);
-
+    padding: 32px;
+    width: 92%;
+    max-width: 1400px;
+    margin: 28px auto;
+    background-color: var(--jum-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--jum-border);
+    border-radius: 16px;
+    box-shadow: var(--jum-shadow);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.tableh1 th {
-    width: 30%;
-}
-
-/* Title and searchbox sit opposite each other in one flex row */
+/* Navbar & Header */
 .navbar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0px 10px 30px;
+    padding: 0 0 24px 0;
+    border-bottom: 1px solid var(--jum-border);
+    margin-bottom: 24px;
 }
 
-/* ------------------------------------------------------------------
-   Material form-outline inputs — 1:1 replica of the MDB UI-Kit 4.2.0
-   rules used by the register page of the 7Auth project, but SCOPED to
-   the Add Contact form (.inp) so no external/global framework CSS can
-   affect the rest of the page.
-   The only deviations from MDB are the two colors this dark theme
-   needs: white input text + a subtle dark input background, and a
-   light label color instead of MDB's dark rgba(0,0,0,.6).
-   ------------------------------------------------------------------ */
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.navbar h3 {
+    margin: 0;
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--body-text);
+    text-wrap: balance;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar h3 i {
+    color: var(--accent);
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--jum-border);
+    background: var(--card-subtle-bg);
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 1.15rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-2px);
+    background: var(--accent);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+/* Form Section (Left Column) */
+.inp {
+    background-color: var(--card-subtle-bg);
+    border: 1px solid var(--jum-border);
+    border-radius: 12px;
+    padding: 24px 20px;
+}
+
+.inp h5 {
+    color: var(--body-text);
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    text-wrap: balance;
+}
+
+/* Modern Floating Input Groups */
 .inp .form-outline {
     position: relative;
+    margin-top: 18px;
 }
 
 .inp .form-outline .form-control {
-    min-height: auto;
-    height: auto;
-    border: 0;
-    background: transparent;
-    transition: all 0.2s linear;
-    /* dark-theme fixes: readable text + a visible field background */
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.25);
-}
-
-.inp .form-outline .form-control:focus {
+    width: 100%;
+    height: 48px;
+    padding: 16px 14px 4px 14px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--input-text);
+    font-size: 15px;
+    transition: all 0.2s ease;
+    outline: none;
     box-shadow: none !important;
 }
 
-.inp .form-outline .form-control~.form-label {
+.inp .form-outline .form-control:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2) !important;
+}
+
+.inp .form-outline .form-label {
     position: absolute;
-    top: 0;
-    max-width: 90%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    left: 0.75rem;
-    padding-top: 0.35rem;
+    top: 14px;
+    left: 14px;
+    color: var(--label-text);
+    font-size: 14px;
     pointer-events: none;
-    transform-origin: 0 0;
-    transition: all 0.2s ease-out;
-    color: rgba(255, 255, 255, 0.6);
-    /* dark-theme fix (MDB uses rgba(0,0,0,.6)) */
-    margin-bottom: 0;
+    transition: all 0.2s ease;
+    margin: 0;
 }
 
-.inp .form-outline .form-control~.form-notch {
-    display: flex;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    max-width: 100%;
-    height: 100%;
-    text-align: left;
-    pointer-events: none;
+/* Float label on active, focus, or when input has content */
+.inp .form-outline .form-control.active ~ .form-label,
+.inp .form-outline .form-control:focus ~ .form-label,
+.inp .form-outline .form-control:not(:placeholder-shown) ~ .form-label {
+    top: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
 }
 
-.inp .form-outline .form-control~.form-notch div {
-    pointer-events: none;
-    border: 1px solid #bdbdbd;
-    box-sizing: border-box;
-    background: transparent;
-    transition: all 0.2s linear;
+.inp .form-outline .form-control:not(:focus):not(:placeholder-shown) ~ .form-label {
+    color: var(--label-text);
 }
 
-.inp .form-outline .form-control~.form-notch .form-notch-leading {
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0.5rem;
-    border-right: none;
-    border-radius: 0.25rem 0 0 0.25rem;
+/* Modern Validation Pseudo-class */
+.inp .form-outline .form-control:user-invalid {
+    border-color: #ef4444;
 }
 
-.inp .form-outline .form-control~.form-notch .form-notch-middle {
-    flex: 0 0 auto;
-    width: auto;
-    max-width: calc(100% - 1rem);
-    height: 100%;
-    border-right: none;
-    border-left: none;
+.inp .form-outline .form-control:user-invalid ~ .form-label {
+    color: #ef4444;
 }
 
-.inp .form-outline .form-control~.form-notch .form-notch-trailing {
-    flex-grow: 1;
-    height: 100%;
-    border-left: none;
-    border-radius: 0 0.25rem 0.25rem 0;
+/* Hide legacy notch divs since clean CSS handles borders */
+.inp .form-notch {
+    display: none !important;
 }
 
-/* the label floats up when the field is focused or holds a value (.active) */
-.inp .form-outline .form-control.active~.form-label,
-.inp .form-outline .form-control:focus~.form-label {
-    transform: translateY(-1rem) translateY(0.1rem) scale(0.8);
-}
-
-.inp .form-outline .form-control:focus~.form-label {
-    color: #fdfdfd;
-}
-
-.inp .form-outline .form-control.active~.form-notch .form-notch-middle,
-.inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
-    border-right: none;
-    border-left: none;
-    border-top: 1px solid transparent;
-}
-
-.inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
-    border-color: #ffffff;
-    box-shadow: 0 1px 0 0 #ffffff;
-    border-top: 1px solid transparent;
-}
-
-.inp .form-outline .form-control.active~.form-notch .form-notch-leading,
-.inp .form-outline .form-control:focus~.form-notch .form-notch-leading {
-    border-right: none;
-}
-
-.inp .form-outline .form-control:focus~.form-notch .form-notch-leading {
-    border-color: #ffffff;
-    box-shadow: -1px 0 0 0 #ffffff, 0 1px 0 0 #ffffff, 0 -1px 0 0 #ffffff;
-}
-
-.inp .form-outline .form-control.active~.form-notch .form-notch-trailing,
-.inp .form-outline .form-control:focus~.form-notch .form-notch-trailing {
-    border-left: none;
-}
-
-.inp .form-outline .form-control:focus~.form-notch .form-notch-trailing {
-    border-color: #ffffff;
-    box-shadow: 1px 0 0 0 #ffffff, 0 -1px 0 0 #ffffff, 0 1px 0 0 #ffffff;
-}
-
-/* Hide the native spinner arrows of number inputs (Add Contact phone
-   field) — Webkit/Blink and Firefox. */
+/* Hide native spinner arrows of number inputs */
 .inp input[type="number"]::-webkit-outer-spin-button,
 .inp input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -174,106 +309,274 @@ body {
     appearance: textfield;
 }
 
-/* Inline row editing (Edit button turns the row into inputs) */
-.inline-edit {
-    min-width: 0;
-    width: 100%;
-    color: #212529;
-    background-color: #fff;
-    font-size: 14px;
-    padding: 4px 8px;
+/* Submit Button */
+.btn1 {
+    margin-top: 22px;
+    height: 46px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+    border: none;
+    color: var(--accent-text);
+    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
-.contact-action-save:hover {
-    color: #28a745;
+.btn1:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(6, 182, 212, 0.45);
+    color: #ffffff;
 }
 
-.contact-action-cancel:hover {
-    color: #6c757d;
+.btn1:active {
+    transform: translateY(0);
 }
 
+/* Alerts / Error feedback */
 .alert {
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 6px;
+    margin-bottom: 0;
     display: none;
 }
 
-.btn1 {
-    margin: 20px 0px;
+/* Contacts Table (Bootstrap 5 Integrated) */
+#myTable {
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-bg: var(--table-stripe-bg);
+    --bs-table-hover-bg: var(--table-hover-bg);
+    --bs-table-color: var(--table-text);
+    --bs-table-border-color: var(--table-border);
+    color: var(--table-text);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--card-subtle-bg);
+    border: 1px solid var(--table-border);
+    margin-bottom: 20px;
 }
 
+#myTable thead th {
+    background-color: var(--table-header-bg);
+    color: var(--body-text);
+    border: none;
+    border-bottom: 1px solid var(--table-border);
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    text-wrap: balance;
+    box-shadow: none;
+}
+
+#myTable tbody tr {
+    transition: background-color 0.15s ease;
+    background-color: transparent;
+}
+
+#myTable tbody tr:nth-of-type(odd) {
+    background-color: var(--table-stripe-bg);
+}
+
+#myTable tbody tr:hover {
+    background-color: var(--table-hover-bg);
+}
+
+#myTable tbody td {
+    border: none;
+    border-bottom: 1px solid var(--table-border);
+    padding: 13px 16px;
+    vertical-align: middle;
+    font-size: 14px;
+    color: var(--table-text);
+    box-shadow: none;
+}
+
+/* Action Buttons */
 .contact-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     padding: 0;
-    border: 0;
+    border: none;
+    border-radius: 6px;
     background: transparent;
-    color: #fff;
+    color: var(--label-text);
     cursor: pointer;
-    font-size: 16px;
-    transition: color 0.2s ease;
+    font-size: 15px;
+    transition: all 0.2s ease;
 }
 
-.contact-action:focus {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
+.contact-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
 }
 
 .contact-action-edit:hover {
-    color: #ffc107;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.12);
 }
 
 .contact-action-delete:hover {
-    color: #dc3545;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
 }
 
+.contact-action-save {
+    color: #10b981;
+}
+
+.contact-action-save:hover {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.contact-action-cancel {
+    color: var(--label-text);
+}
+
+.contact-action-cancel:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+}
+
+/* Inline Edit Controls */
+.inline-edit {
+    width: 100%;
+    min-width: 0;
+    padding: 6px 10px;
+    border: 1px solid var(--input-focus-border);
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-size: 14px;
+    outline: none;
+}
+
+/* Pagination */
 .pagination-nav {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
 }
 
 .pagination-nav .pagination {
-    position: relative;
     display: flex;
     justify-content: center;
-    right: 260px;
-    gap: 0.4rem;
+    gap: 6px;
     margin: 0;
     padding: 0;
     list-style: none;
-}
-
-.pagination-nav .page-item {
-    margin: 0;
 }
 
 .pagination-nav .page-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 2.25rem;
-    height: 2.25rem;
-    padding: 0 0.65rem;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 0.25rem;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.2);
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--pagination-border);
+    border-radius: 8px;
+    color: var(--pagination-text);
+    background-color: var(--pagination-bg);
     text-decoration: none;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
 
-.pagination-nav .page-link:hover,
-.pagination-nav .page-link:focus {
-    color: #fff;
-    background-color: rgba(23, 162, 184, 0.85);
-    border-color: #17a2b8;
-    outline: none;
+.pagination-nav .page-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background-color: var(--table-hover-bg);
 }
 
 .pagination-nav .page-item.active .page-link {
-    color: #fff;
-    background-color: #17a2b8;
-    border-color: #17a2b8;
+    background-color: var(--pagination-active-bg);
+    border-color: var(--pagination-active-bg);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
 }
 
 .pagination-nav .page-item.disabled .page-link {
-    color: rgba(255, 255, 255, 0.45);
-    background-color: rgba(0, 0, 0, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    opacity: 0.4;
     pointer-events: none;
+}
+
+/* Footer */
+footer {
+    padding: 24px 0;
+    color: var(--label-text);
+    font-size: 13px;
+    letter-spacing: 0.3px;
+}
+
+/* Modern Floating Toast Container */
+#toastContainer {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast-item {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 280px;
+    max-width: 420px;
+    padding: 14px 18px;
+    background: var(--toast-bg);
+    color: var(--toast-text);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--toast-border);
+    border-radius: 10px;
+    box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.35);
+    font-size: 14px;
+    font-weight: 500;
+    animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast-item.toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.toast-item.toast-success i {
+    color: #10b981;
+}
+
+.toast-item.toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast-item.toast-error i {
+    color: #ef4444;
+}
+
+.toast-item.toast-hide {
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
