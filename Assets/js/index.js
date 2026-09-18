@@ -51,15 +51,83 @@ function initFormOutlines(scope) {
     });
 }
 
-// Ensure phone field only accepts up to 12 digits
-if (userPhoneInp) {
-    userPhoneInp.addEventListener("input", function () {
-        var digits = userPhoneInp.value.replace(/\D/g, "").slice(0, 12);
-        if (userPhoneInp.value !== digits) {
-            userPhoneInp.value = digits;
+/**
+ * Attach strict numeric-only and length restrictions to phone inputs.
+ * Enforces:
+ * 1. Only digits (0-9) are allowed (blocks 'e', '+', '-', '.', letters, and symbols).
+ * 2. Maximum digits limit (matches max attribute length, e.g. 12 digits for max="999999999999").
+ * 3. Sanitizes paste data and mobile virtual keyboard input.
+ */
+function attachPhoneInputRestrictions(input) {
+    if (!input) return;
+
+    var maxLen = 12;
+    if (input.hasAttribute("max")) {
+        var maxAttr = input.getAttribute("max");
+        if (maxAttr && maxAttr.length > 0) {
+            maxLen = maxAttr.length;
+        }
+    }
+
+    input.addEventListener("keydown", function (e) {
+        // Allow control & navigation keys
+        var allowedKeys = [
+            "Backspace", "Tab", "Enter", "Escape", "Delete",
+            "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
+            "Home", "End"
+        ];
+        if (allowedKeys.indexOf(e.key) !== -1) {
+            return;
+        }
+
+        // Allow Ctrl / Command combinations (Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z)
+        if (e.ctrlKey || e.metaKey) {
+            return;
+        }
+
+        // Strictly block any key that is not a numeric digit (0-9)
+        // (This prevents typing 'e', 'E', '+', '-', '.', and any letters/symbols)
+        if (!/^[0-9]$/.test(e.key)) {
+            e.preventDefault();
+            return;
+        }
+
+        // Prevent typing beyond max length
+        var isSelected = false;
+        try {
+            if (typeof input.selectionStart === "number" && typeof input.selectionEnd === "number") {
+                isSelected = input.selectionStart !== input.selectionEnd;
+            }
+        } catch (err) {
+            isSelected = false;
+        }
+
+        var currentDigits = input.value.replace(/\D/g, "");
+        if (!isSelected && currentDigits.length >= maxLen) {
+            e.preventDefault();
+        }
+    });
+
+    input.addEventListener("paste", function (e) {
+        e.preventDefault();
+        var paste = (e.clipboardData || window.clipboardData).getData("text") || "";
+        var cleanPaste = paste.replace(/\D/g, "");
+        var currentDigits = input.value.replace(/\D/g, "");
+        var combined = (currentDigits + cleanPaste).slice(0, maxLen);
+        input.value = combined;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    input.addEventListener("input", function () {
+        var digits = input.value.replace(/\D/g, "").slice(0, maxLen);
+        if (input.value !== digits) {
+            input.value = digits;
         }
     });
 }
+
+// Apply restrictions to the add contact phone field
+attachPhoneInputRestrictions(userPhoneInp);
 
 function escapeHtml(value) {
     return String(value == null ? "" : value)
@@ -334,6 +402,14 @@ function startEditRow(row) {
     cells[4].innerHTML = '<button onclick="cancelEditRow(this)" class="contact-action contact-action-cancel" aria-label="Cancel editing" title="Cancel"><i class="fas fa-times"></i></button>';
 
     editingRow = row;
+
+    var phoneInput = cells[1].querySelector("input");
+    if (phoneInput) {
+        phoneInput.setAttribute("max", "999999999999");
+        phoneInput.inputMode = "numeric";
+        attachPhoneInputRestrictions(phoneInput);
+    }
+
     var firstInput = cells[0].querySelector("input");
     if (firstInput) firstInput.focus();
 }

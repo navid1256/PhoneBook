@@ -128,7 +128,7 @@
     <script src="<?php echo asset_url('js/bootstrap.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/dexie.min.js'); ?>"></script>
     <script src="<?php echo asset_url('js/db.js'); ?>?v=3"></script>
-    <script src="<?php echo asset_url('js/index.js'); ?>?v=21"></script>
+    <script src="<?php echo asset_url('js/index.js'); ?>?v=22"></script>
 </body>
 
 </html>
