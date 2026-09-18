@@ -16,13 +16,13 @@
         .empty-state {
             padding: 40px 20px;
             text-align: center;
-            color: #888;
+            color: #b0bec5;
         }
         .empty-state i {
             font-size: 2.5rem;
             margin-bottom: 12px;
             display: block;
-            color: #bbb;
+            color: #cfd8dc;
         }
     </style>
 </head>

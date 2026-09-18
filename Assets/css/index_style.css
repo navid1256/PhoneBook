@@ -1,5 +1,6 @@
 body {
     color: aliceblue;
+    background-color: #0b1f3a;
     background-size: cover;
     background-attachment: fixed;
     background-image: url("../images/backgrounds-blank-blue-953214.jpg");
@@ -15,7 +16,6 @@ body {
     width: 90%;
     margin: auto;
     background-color: rgba(0, 0, 0, 0.3);
-
 }
 
 .tableh1 th {
@@ -72,7 +72,7 @@ body {
     pointer-events: none;
     transform-origin: 0 0;
     transition: all 0.2s ease-out;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.75);
     /* dark-theme fix (MDB uses rgba(0,0,0,.6)) */
     margin-bottom: 0;
 }
@@ -204,6 +204,19 @@ body {
     margin: 20px 0px;
 }
 
+.btn-info {
+    color: #fff;
+    background-color: #117a8b;
+    border-color: #10707f;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+    color: #fff;
+    background-color: #0e6674;
+    border-color: #0c5c69;
+}
+
 .contact-action {
     padding: 0;
     border: 0;
@@ -264,20 +277,20 @@ body {
 .pagination-nav .page-link:hover,
 .pagination-nav .page-link:focus {
     color: #fff;
-    background-color: rgba(23, 162, 184, 0.85);
-    border-color: #17a2b8;
+    background-color: #117a8b;
+    border-color: #117a8b;
     outline: none;
 }
 
 .pagination-nav .page-item.active .page-link {
     color: #fff;
-    background-color: #17a2b8;
-    border-color: #17a2b8;
+    background-color: #117a8b;
+    border-color: #117a8b;
 }
 
 .pagination-nav .page-item.disabled .page-link {
-    color: rgba(255, 255, 255, 0.45);
-    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(255, 255, 255, 0.55);
+    background-color: rgba(0, 0, 0, 0.15);
     border-color: rgba(255, 255, 255, 0.2);
     pointer-events: none;
 }
