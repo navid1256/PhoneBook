@@ -1,8 +1,6 @@
 RewriteEngine On
 
-# اگر فایل یا پوشه واقعی بود، مستقیماً نمایش بده
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# سایر درخواست‌ها به index.php بروند
 RewriteRule ^ index.php [QSA,L]

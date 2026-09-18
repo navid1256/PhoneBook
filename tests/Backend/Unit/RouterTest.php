@@ -28,7 +28,6 @@ class RouterTest extends TestCase
         Route::delete('/test-delete', 'TestController@destroy');
 
         $routes = Route::routes();
-        $methods = array_column($routes, 'methods');
 
         $foundPost = false;
         $foundPut = false;
