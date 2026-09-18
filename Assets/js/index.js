@@ -15,8 +15,7 @@ var addStatus = document.getElementById("addStatus");
    events that setInputValue() dispatches, so programmatic fills
    (editContact) also float the labels. Scoped to .form-outline only.
    ------------------------------------------------------------------ */
-function updateFormOutline(input)
-{
+function updateFormOutline(input) {
     var wrapper = input.closest(".form-outline");
 
     if (!wrapper) {
@@ -37,8 +36,7 @@ function updateFormOutline(input)
     }
 }
 
-function initFormOutlines(scope)
-{
+function initFormOutlines(scope) {
     var inputs = (scope || document).querySelectorAll(".form-outline .form-control");
 
     Array.prototype.forEach.call(inputs, function (input) {
@@ -70,15 +68,14 @@ var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (ro
     var cells = row.getElementsByTagName("td");
 
     return {
-        id: Number.parseInt(row.getAttribute("data-id"), 10) || 0,
+        id: Number.parseInt(row.dataset.id, 10) || 0,
         name: cells[0].textContent.trim(),
         phone: cells[1].textContent.trim(),
         email: cells[2].textContent.trim()
     };
 });
 
-function escapeHtml(value)
-{
+function escapeHtml(value) {
     return String(value)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -89,8 +86,7 @@ function escapeHtml(value)
 
 
 // POST the form to the server so the new contact is stored in the database
-function addContact()
-{
+function addContact() {
     fetch(addForm.action, {
         method: "POST",
         body: new URLSearchParams({
@@ -132,8 +128,7 @@ if (addForm) {
 }
 
 // Show server responses (success / error) under the add-contact form
-function showAddStatus(message, ok)
-{
+function showAddStatus(message, ok) {
     if (!addStatus) {
         return;
     }
@@ -145,8 +140,7 @@ function showAddStatus(message, ok)
 }
 
 // Render rows with the exact same markup the server-side view produces
-function displayData()
-{
+function displayData() {
     var temp = "";
 
     for (var contact of userContacts) {
@@ -164,8 +158,7 @@ function displayData()
 }
 
 // Locate a row by returning its index in the rendered table
-function rowIndexOf(button)
-{
+function rowIndexOf(button) {
     var row = button.closest("tr");
 
     if (!row) {
@@ -176,8 +169,7 @@ function rowIndexOf(button)
 }
 
 // Called from the view as deleteContact(this)
-function deleteContact(button)
-{
+function deleteContact(button) {
     if (!confirm("Are you sure you want to delete this contact ?")) {
         return;
     }
@@ -221,8 +213,7 @@ function deleteContact(button)
 
 // Set an MDB input value and notify its floating label
 // (MDB only reacts to real events, not to direct .value assignment)
-function setInputValue(input, value)
-{
+function setInputValue(input, value) {
     input.value = value;
     input.dispatchEvent(new Event("input", { bubbles: true }));
 }
@@ -231,8 +222,7 @@ function setInputValue(input, value)
 var editingRow = null;
 
 // Turn the 3 value cells of a row into inputs + swap Edit/Delete for Save/Cancel
-function startEditRow(row)
-{
+function startEditRow(row) {
     var cells = row.querySelectorAll("td");
 
     // cells[0]=name, cells[1]=phone, cells[2]=email: keep current text as input value
@@ -256,8 +246,7 @@ function startEditRow(row)
 }
 
 // Restore the row to display mode with the given contact values
-function endEditRow(row, contact)
-{
+function endEditRow(row, contact) {
     var cells = row.querySelectorAll("td");
 
     cells[0].textContent = contact.name;
@@ -272,8 +261,7 @@ function endEditRow(row, contact)
 }
 
 // Read the inline inputs of an edited row
-function readEditedRow(row)
-{
+function readEditedRow(row) {
     var inputs = row.querySelectorAll("input.inline-edit");
 
     return {
@@ -284,8 +272,7 @@ function readEditedRow(row)
 }
 
 // Called from the view as editContact(this): start inline editing on that row
-function editContact(button)
-{
+function editContact(button) {
     var row = button.closest("tr");
     var index = rowIndexOf(button);
 
@@ -306,8 +293,7 @@ function editContact(button)
 }
 
 // Called from the view as saveEditedContact(this): validate then PUT to the server
-function saveEditedContact(button)
-{
+function saveEditedContact(button) {
     var row = button.closest("tr");
     var index = rowIndexOf(button);
 
@@ -320,9 +306,9 @@ function saveEditedContact(button)
     var phoneDigits = edited.phone.replaceAll(/\D/g, "");
 
     // Same rules as the Add form (validateName/validatePhone/validateEmail)
-    var nameOk = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u.test(edited.name);
+    var nameOk = /^[\p{L}\p{N}]+(?:[ _-][\p{L}\p{N}]+)*$/u.test(edited.name);
     var phoneOk = phoneDigits.length >= 10 && phoneDigits.length <= 12;
-    var emailOk = edited.email === "" || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(edited.email);
+    var emailOk = edited.email === "" || /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(edited.email);
 
     if (!nameOk || !phoneOk || !emailOk) {
         alert("Invalid values: name must be letters, phone 10-12 digits, email a valid address.");
@@ -356,8 +342,7 @@ function saveEditedContact(button)
 }
 
 // Called from the view as cancelEditRow(this): restore original values
-function cancelEditRow(button)
-{
+function cancelEditRow(button) {
     var index = rowIndexOf(button);
 
     if (index === -1 || !userContacts[index]) {
@@ -368,37 +353,35 @@ function cancelEditRow(button)
 }
 
 // Only clear the "add contact" inputs, never the search box
-function clearData()
-{
+function clearData() {
     setInputValue(userNameInp, "");
     setInputValue(userPhoneInp, "");
     setInputValue(userEmailInp, "");
 }
 
 
-function searchFunction() 
-{
-  var input = document.getElementById("myInput");
-  if (!input) {
-    return;
-  }
+function searchFunction() {
+    var input = document.getElementById("myInput");
+    if (!input) {
+        return;
+    }
 
-  var filter = input.value.trim().toUpperCase();
-  var rows = document.querySelectorAll("#tableBody tr");
+    var filter = input.value.trim().toUpperCase();
+    var rows = document.querySelectorAll("#tableBody tr");
 
-  Array.prototype.forEach.call(rows, function (row) {
-    var contactValues = Array.from(row.querySelectorAll("td"))
-      .slice(0, 3)
-      .map(function (cell) {
-        return (cell.textContent || "").toUpperCase();
-      });
+    Array.prototype.forEach.call(rows, function (row) {
+        var contactValues = Array.from(row.querySelectorAll("td"))
+            .slice(0, 3)
+            .map(function (cell) {
+                return (cell.textContent || "").toUpperCase();
+            });
 
-    var matches = contactValues.some(function (value) {
-      return value.includes(filter);
+        var matches = contactValues.some(function (value) {
+            return value.includes(filter);
+        });
+
+        row.style.display = matches ? "" : "none";
     });
-
-    row.style.display = matches ? "" : "none";
-  });
 }
 
 var searchInput = document.getElementById("myInput");
@@ -418,8 +401,7 @@ searchFunction();
 
 
 // Show/hide an inline alert; tolerate a missing element so the flow never crashes
-function showAlert(id, show)
-{
+function showAlert(id, show) {
     var el = document.getElementById(id);
 
     if (el) {
@@ -427,25 +409,21 @@ function showAlert(id, show)
     }
 }
 
-function validateName()
-{
+function validateName() {
     // Unicode-aware: accepts Persian/Arabic/English letters and digits
     // (matches the server, which only requires a non-empty name)
-    var regex = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u;
-    if (regex.test(userNameInp.value))
-    {
+    var regex = /^[\p{L}\p{N}]+(?:[ _-][\p{L}\p{N}]+)*$/u;
+    if (regex.test(userNameInp.value)) {
         showAlert("nameAlert", false);
         return true;
     }
-    else
-    {
+    else {
         showAlert("nameAlert", true);
         return false;
     }
 }
 
-function validatePhone()
-{
+function validatePhone() {
     // Same rule as the server-side Validator::isValidPhoneNumber:
     // strip non-digit characters and accept 10-12 digits.
     // Covers 10-digit local numbers, 11-digit Iranian mobile (09xxxxxxxxx),
@@ -463,8 +441,7 @@ function validatePhone()
 }
 
 
-function validateEmail()
-{
+function validateEmail() {
     // Email is optional: an empty field is considered valid
     if (userEmailInp.value.trim() === "") {
         showAlert("mailAlert", false);
@@ -473,15 +450,13 @@ function validateEmail()
 
     // Simple structural check (local@domain.tld) — the server-side
     // Validator::isValidEmail uses PHP FILTER_VALIDATE_EMAIL anyway.
-    var regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-    
-    if (regex.test(userEmailInp.value))
-    {
+    var regex = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
+
+    if (regex.test(userEmailInp.value)) {
         showAlert("mailAlert", false);
         return true;
     }
-    else
-    {
+    else {
         showAlert("mailAlert", true);
         return false;
     }
