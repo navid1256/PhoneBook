@@ -3,6 +3,10 @@ body {
     background-size: cover;
     background-attachment: fixed;
     background-image: url("../images/backgrounds-blank-blue-953214.jpg");
+    background-image: image-set(
+        url("../images/backgrounds-blank-blue-953214.webp") type("image/webp"),
+        url("../images/backgrounds-blank-blue-953214.jpg") type("image/jpeg")
+    );
 }
 
 

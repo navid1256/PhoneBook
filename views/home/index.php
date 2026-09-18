@@ -13,11 +13,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Phone Book - Fast and responsive contact management web application.">
     <title>Phone Book</title>
 
+    <link rel="preload" as="image" href="<?php echo asset_url('images/backgrounds-blank-blue-953214.webp'); ?>" type="image/webp" />
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>" />
     <link rel="stylesheet" href="<?php echo asset_url('css/all.min.css'); ?>" />
-    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=8" />
+    <link rel="stylesheet" href="<?php echo asset_url('css/index_style.css'); ?>?v=9" />
     <link rel="stylesheet" href="<?php echo asset_url('template/searchbox/style.css'); ?>" />
 
 
@@ -30,7 +32,7 @@
     <div class="jumbotron jum">
 
         <div class=" navbar">
-            <h3>Phone Book <i class="far fa-address-book"></i></h3>
+            <h1 class="h3 m-0">Phone Book <i class="far fa-address-book"></i></h1>
 
             <form id="searchForm" method="get" action="" class="wrap">
                 <div class="search">
@@ -95,14 +97,14 @@
 
             <div class="col-lg-8">
 
-                <table id="myTable" class="table text-justify table-striped">
+                <table id="myTable" class="table text-justify table-striped" aria-label="Contacts list">
 
                     <thead class="tableh1">
-                        <th class="">Name</th>
-                        <th class="">Phone</th>
-                        <th class="">E-mail</th>
-                        <th class="col-1">Edit</th>
-                        <th class="col-1">Delete</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">E-mail</th>
+                        <th scope="col" class="col-1">Edit</th>
+                        <th scope="col" class="col-1">Delete</th>
                     </thead>
 
                     <tbody id="tableBody">

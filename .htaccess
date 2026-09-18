@@ -1,8 +1,15 @@
 RewriteEngine On
 
-# اگر فایل یا پوشه واقعی بود، مستقیماً نمایش بده
+# if the file or folder is real, show it directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# سایر درخواست‌ها به index.php بروند
+# other requests go to index.php
 RewriteRule ^ index.php [QSA,L]
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header unset X-Powered-By
+</IfModule>
