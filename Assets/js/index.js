@@ -1,27 +1,31 @@
 'use strict';
 
+/**
+ * PhoneBook - Client-side Controller for IndexedDB
+ */
+
 var userNameInp = document.getElementById("userName");
 var userPhoneInp = document.getElementById("userPhone");
 var userEmailInp = document.getElementById("userEmail");
 var tableBody = document.getElementById("tableBody");
 var addForm = document.getElementById("addForm");
 var addStatus = document.getElementById("addStatus");
+var searchInput = document.getElementById("myInput");
+var searchForm = document.getElementById("searchForm");
+var paginationList = document.getElementById("paginationList");
+var paginationNav = document.getElementById("paginationNav");
 
+// Application State
+var currentPage = 1;
+var pageSize = 20;
+var currentSearch = "";
+var userContacts = [];
+var editingRow = null;
 
-/* --- Material form-outline behavior (MDB UI-Kit 4.2.0 replica) --------
-   Adds the `.active` class while a field holds a value and sizes the
-   notch "middle" segment to its label width — the same job mdb.min.js
-   does on the 7Auth register page. Reacts to the bubbled "input"
-   events that setInputValue() dispatches, so programmatic fills
-   (editContact) also float the labels. Scoped to .form-outline only.
-   ------------------------------------------------------------------ */
-function updateFormOutline(input)
-{
+/* --- Material form-outline behavior (MDB UI-Kit replica) --- */
+function updateFormOutline(input) {
     var wrapper = input.closest(".form-outline");
-
-    if (!wrapper) {
-        return;
-    }
+    if (!wrapper) return;
 
     var label = wrapper.querySelector(".form-label");
     var notchMiddle = wrapper.querySelector(".form-notch-middle");
@@ -37,88 +41,239 @@ function updateFormOutline(input)
     }
 }
 
-function initFormOutlines(scope)
-{
+function initFormOutlines(scope) {
     var inputs = (scope || document).querySelectorAll(".form-outline .form-control");
-
     Array.prototype.forEach.call(inputs, function (input) {
         updateFormOutline(input);
-
         input.addEventListener("input", function () {
             updateFormOutline(input);
         });
     });
 }
 
-initFormOutlines();
-
-// The phone field accepts 10-12 digits: number inputs ignore maxlength,
-// so cap typing at 12 digits here (validatePhone still checks the 10-12 rule)
+// Ensure phone field only accepts up to 12 digits
 if (userPhoneInp) {
     userPhoneInp.addEventListener("input", function () {
-        var digits = userPhoneInp.value.replaceAll(/\D/g, "").slice(0, 12);
-
+        var digits = userPhoneInp.value.replace(/\D/g, "").slice(0, 12);
         if (userPhoneInp.value !== digits) {
             userPhoneInp.value = digits;
         }
     });
 }
 
-
-// Client-side copy of the contacts rendered by the server
-var userContacts = Array.from(tableBody.querySelectorAll("tr")).map(function (row) {
-    var cells = row.getElementsByTagName("td");
-
-    return {
-        id: Number.parseInt(row.getAttribute("data-id"), 10) || 0,
-        name: cells[0].textContent.trim(),
-        phone: cells[1].textContent.trim(),
-        email: cells[2].textContent.trim()
-    };
-});
-
-function escapeHtml(value)
-{
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("\"", "&quot;")
-        .replaceAll("'", "&#039;");
+function escapeHtml(value) {
+    return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
+function setInputValue(input, value) {
+    if (!input) return;
+    input.value = value;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+}
 
-// POST the form to the server so the new contact is stored in the database
-function addContact()
-{
-    fetch(addForm.action, {
-        method: "POST",
-        body: new URLSearchParams({
-            name: userNameInp.value,
-            phone: userPhoneInp.value,
-            email: userEmailInp.value
-        })
-    })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            if (data.success) {
-                showAddStatus(data.message, true);
-                // Reload so the table and pagination reflect the database
-                setTimeout(function () {
-                    window.location.reload();
-                }, 1000);
-            } else {
-                showAddStatus(data.message, false);
-            }
-        })
-        .catch(function () {
-            showAddStatus("Could not reach the server. Please try again.", false);
+function showAlert(id, show) {
+    var el = document.getElementById(id);
+    if (el) {
+        el.style.display = show ? "block" : "none";
+    }
+}
+
+function showAddStatus(message, ok) {
+    if (!addStatus) return;
+    addStatus.textContent = message;
+    addStatus.classList.remove("alert-danger", "alert-success");
+    addStatus.classList.add(ok ? "alert-success" : "alert-danger");
+    addStatus.style.display = "block";
+
+    if (ok) {
+        setTimeout(function () {
+            addStatus.style.display = "none";
+        }, 4000);
+    }
+}
+
+function clearData() {
+    setInputValue(userNameInp, "");
+    setInputValue(userPhoneInp, "");
+    setInputValue(userEmailInp, "");
+    showAlert("nameAlert", false);
+    showAlert("phoneAlert", false);
+    showAlert("mailAlert", false);
+}
+
+function validateName() {
+    var regex = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u;
+    if (regex.test(userNameInp.value.trim())) {
+        showAlert("nameAlert", false);
+        return true;
+    } else {
+        showAlert("nameAlert", true);
+        return false;
+    }
+}
+
+function validatePhone() {
+    var cleaned = userPhoneInp.value.replace(/\D/g, "");
+    if (cleaned.length >= 10 && cleaned.length <= 12) {
+        showAlert("phoneAlert", false);
+        return true;
+    }
+    showAlert("phoneAlert", true);
+    return false;
+}
+
+function validateEmail() {
+    if (userEmailInp.value.trim() === "") {
+        showAlert("mailAlert", false);
+        return true;
+    }
+    var regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    if (regex.test(userEmailInp.value.trim())) {
+        showAlert("mailAlert", false);
+        return true;
+    } else {
+        showAlert("mailAlert", true);
+        return false;
+    }
+}
+
+/**
+ * Loads contacts from IndexedDB and updates the table and pagination.
+ */
+async function loadContacts(page) {
+    if (page !== undefined) {
+        currentPage = page;
+    }
+
+    try {
+        var data = await window.ContactDB.getPaginated(currentPage, pageSize, currentSearch);
+        userContacts = data.contacts;
+        currentPage = data.currentPage;
+
+        renderTable(data.contacts, data.totalContacts);
+        renderPagination(data.totalPages, data.currentPage);
+    } catch (err) {
+        console.error("Error loading contacts from IndexedDB:", err);
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Error loading data from IndexedDB: ' + escapeHtml(err.message) + '</td></tr>';
+    }
+}
+
+/**
+ * Renders contact rows into #tableBody.
+ */
+function renderTable(contacts, totalCount) {
+    if (!tableBody) return;
+
+    if (!contacts || contacts.length === 0) {
+        if (currentSearch.trim() !== "") {
+            tableBody.innerHTML = '<tr><td colspan="5" class="empty-state">' +
+                '<i class="fas fa-search"></i>' +
+                '<h6>No contacts found for "' + escapeHtml(currentSearch) + '"</h6>' +
+                '</td></tr>';
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="5" class="empty-state">' +
+                '<i class="far fa-address-book"></i>' +
+                '<h6>Your Phone Book is empty</h6>' +
+                '</td></tr>';
+        }
+        return;
+    }
+
+    var html = "";
+    for (var i = 0; i < contacts.length; i++) {
+        var contact = contacts[i];
+        html += '<tr data-id="' + contact.id + '">' +
+            '<td class="name">' + escapeHtml(contact.name) + '</td>' +
+            '<td class="phone">' + escapeHtml(contact.phone) + '</td>' +
+            '<td class="email">' + escapeHtml(contact.email || "") + '</td>' +
+            '<td><button onclick="editContact(this)" class="contact-action contact-action-edit" aria-label="Edit contact" title="Edit"><i class="fas fa-edit"></i></button></td>' +
+            '<td><button onclick="deleteContact(this)" class="contact-action contact-action-delete" aria-label="Delete contact" title="Delete"><i class="fas fa-trash-alt"></i></button></td>' +
+            '</tr>';
+    }
+
+    tableBody.innerHTML = html;
+}
+
+/**
+ * Renders pagination items dynamically.
+ */
+function renderPagination(totalPages, activePage) {
+    if (!paginationList) return;
+
+    if (totalPages <= 1) {
+        paginationList.innerHTML = "";
+        if (paginationNav) paginationNav.style.display = "none";
+        return;
+    }
+
+    if (paginationNav) paginationNav.style.display = "block";
+
+    var html = "";
+
+    // Previous Button
+    var prevDisabled = activePage === 1 ? " disabled" : "";
+    html += '<li class="page-item' + prevDisabled + '">' +
+        '<a class="page-link" href="#" onclick="changePage(' + (activePage - 1) + '); return false;" aria-label="Previous">&laquo;</a>' +
+        '</li>';
+
+    // Page numbers
+    for (var p = 1; p <= totalPages; p++) {
+        var activeClass = p === activePage ? " active" : "";
+        html += '<li class="page-item' + activeClass + '">' +
+            '<a class="page-link" href="#" onclick="changePage(' + p + '); return false;">' + p + '</a>' +
+            '</li>';
+    }
+
+    // Next Button
+    var nextDisabled = activePage === totalPages ? " disabled" : "";
+    html += '<li class="page-item' + nextDisabled + '">' +
+        '<a class="page-link" href="#" onclick="changePage(' + (activePage + 1) + '); return false;" aria-label="Next">&raquo;</a>' +
+        '</li>';
+
+    paginationList.innerHTML = html;
+}
+
+function changePage(page) {
+    loadContacts(page);
+}
+
+function clearSearch() {
+    if (searchInput) {
+        searchInput.value = "";
+    }
+    currentSearch = "";
+    loadContacts(1);
+}
+
+/**
+ * Handle adding new contact to IndexedDB.
+ */
+async function addContact() {
+    var name = userNameInp.value.trim();
+    var phone = userPhoneInp.value.trim();
+    var email = userEmailInp.value.trim();
+
+    try {
+        await window.ContactDB.add({
+            name: name,
+            phone: phone,
+            email: email
         });
+
+        showAddStatus("Contact added successfully to IndexedDB!", true);
+        clearData();
+        await loadContacts(1);
+    } catch (err) {
+        showAddStatus(err.message || "Failed to add contact.", false);
+    }
 }
 
-// Intercept the form submit: validate on the client first, then POST via fetch
+// Add Form Submit listener
 if (addForm) {
     addForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -126,177 +281,92 @@ if (addForm) {
         if (validateName() && validatePhone() && validateEmail()) {
             addContact();
         } else {
-            alert("please fill in the form");
+            showAddStatus("Please fill in the required fields correctly.", false);
         }
     });
 }
 
-// Show server responses (success / error) under the add-contact form
-function showAddStatus(message, ok)
-{
-    if (!addStatus) {
-        return;
-    }
-
-    addStatus.textContent = message;
-    addStatus.classList.remove("alert-danger", "alert-success");
-    addStatus.classList.add(ok ? "alert-success" : "alert-danger");
-    addStatus.style.display = "block";
-}
-
-// Render rows with the exact same markup the server-side view produces
-function displayData()
-{
-    var temp = "";
-
-    for (var contact of userContacts) {
-        temp += "<tr data-id=\"" + contact.id + "\">" +
-            "<td class=\"name\">" + escapeHtml(contact.name) + "</td>" +
-            "<td class=\"phone\">" + escapeHtml(contact.phone) + "</td>" +
-            "<td class=\"email\">" + escapeHtml(contact.email) + "</td>" +
-            "<td><button onclick=\"editContact(this)\" class=\"contact-action contact-action-edit\" aria-label=\"Edit contact\" title=\"Edit\"><i class=\"fas fa-edit\"></i></button></td>" +
-            "<td><button onclick=\"deleteContact(this)\" class=\"contact-action contact-action-delete\" aria-label=\"Delete contact\" title=\"Delete\"><i class=\"fas fa-trash-alt\"></i></button></td>" +
-            "</tr>";
-    }
-
-    tableBody.innerHTML = temp;
-    searchFunction();
-}
-
-// Locate a row by returning its index in the rendered table
-function rowIndexOf(button)
-{
+/**
+ * Locate row index in userContacts array.
+ */
+function rowIndexOf(button) {
     var row = button.closest("tr");
-
-    if (!row) {
-        return -1;
-    }
-
+    if (!row) return -1;
     return Array.prototype.indexOf.call(tableBody.querySelectorAll("tr"), row);
 }
 
-// Called from the view as deleteContact(this)
-function deleteContact(button)
-{
-    if (!confirm("Are you sure you want to delete this contact ?")) {
-        return;
-    }
-
+/**
+ * Delete a contact from IndexedDB.
+ */
+async function deleteContact(button) {
     var index = rowIndexOf(button);
+    if (index === -1 || !userContacts[index]) return;
 
-    if (index === -1) {
+    var contact = userContacts[index];
+    if (!confirm('Are you sure you want to delete "' + contact.name + '"?')) {
         return;
     }
 
-    var contactId = userContacts[index].id;
-
-    if (!contactId) {
-        return;
+    try {
+        await window.ContactDB.delete(contact.id);
+        await loadContacts(currentPage);
+    } catch (err) {
+        alert("Failed to delete contact: " + err.message);
     }
-
-    // DELETE the contact on the server so it is removed from the database
-    fetch(SITE_URL + "contact/delete/" + encodeURIComponent(contactId), {
-        method: "DELETE"
-    })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            if (data.success) {
-                // Remove the row immediately, then reload so the table
-                // and pagination reflect the database
-                userContacts.splice(index, 1);
-                displayData();
-                setTimeout(function () {
-                    window.location.reload();
-                }, 700);
-            } else {
-                alert(data.message || "Failed to delete contact.");
-            }
-        })
-        .catch(function () {
-            alert("Could not reach the server. Please try again.");
-        });
 }
 
-// Set an MDB input value and notify its floating label
-// (MDB only reacts to real events, not to direct .value assignment)
-function setInputValue(input, value)
-{
-    input.value = value;
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-}
-
-// Inline editing state: which table row is currently being edited
-var editingRow = null;
-
-// Turn the 3 value cells of a row into inputs + swap Edit/Delete for Save/Cancel
-function startEditRow(row)
-{
+/**
+ * Inline Editing for Rows
+ */
+function startEditRow(row) {
     var cells = row.querySelectorAll("td");
 
-    // cells[0]=name, cells[1]=phone, cells[2]=email: keep current text as input value
     [0, 1, 2].forEach(function (i) {
         var input = document.createElement("input");
-
         input.type = "text";
         input.className = "form-control form-control-sm inline-edit";
         input.value = cells[i].textContent.trim();
-
         cells[i].textContent = "";
         cells[i].appendChild(input);
     });
 
-    // cells[3] = Edit button, cells[4] = Delete button -> Save / Cancel
     cells[3].innerHTML = '<button onclick="saveEditedContact(this)" class="contact-action contact-action-save" aria-label="Save changes" title="Save"><i class="fas fa-check"></i></button>';
     cells[4].innerHTML = '<button onclick="cancelEditRow(this)" class="contact-action contact-action-cancel" aria-label="Cancel editing" title="Cancel"><i class="fas fa-times"></i></button>';
 
     editingRow = row;
-    cells[0].querySelector("input").focus();
+    var firstInput = cells[0].querySelector("input");
+    if (firstInput) firstInput.focus();
 }
 
-// Restore the row to display mode with the given contact values
-function endEditRow(row, contact)
-{
+function endEditRow(row, contact) {
     var cells = row.querySelectorAll("td");
 
     cells[0].textContent = contact.name;
     cells[1].textContent = contact.phone;
-    cells[2].textContent = contact.email;
+    cells[2].textContent = contact.email || "";
 
     cells[3].innerHTML = '<button onclick="editContact(this)" class="contact-action contact-action-edit" aria-label="Edit contact" title="Edit"><i class="fas fa-edit"></i></button>';
     cells[4].innerHTML = '<button onclick="deleteContact(this)" class="contact-action contact-action-delete" aria-label="Delete contact" title="Delete"><i class="fas fa-trash-alt"></i></button>';
 
     editingRow = null;
-    searchFunction();
 }
 
-// Read the inline inputs of an edited row
-function readEditedRow(row)
-{
+function readEditedRow(row) {
     var inputs = row.querySelectorAll("input.inline-edit");
-
     return {
-        name: inputs[0].value.trim(),
-        phone: inputs[1].value.trim(),
-        email: inputs[2].value.trim()
+        name: inputs[0] ? inputs[0].value.trim() : "",
+        phone: inputs[1] ? inputs[1].value.trim() : "",
+        email: inputs[2] ? inputs[2].value.trim() : ""
     };
 }
 
-// Called from the view as editContact(this): start inline editing on that row
-function editContact(button)
-{
+function editContact(button) {
     var row = button.closest("tr");
     var index = rowIndexOf(button);
+    if (index === -1) return;
 
-    if (index === -1) {
-        return;
-    }
-
-    // Only one row can be edited at a time: restore any previous edited row
     if (editingRow && editingRow !== row) {
         var prevIndex = Array.prototype.indexOf.call(tableBody.querySelectorAll("tr"), editingRow);
-
         if (prevIndex > -1 && userContacts[prevIndex]) {
             endEditRow(editingRow, userContacts[prevIndex]);
         }
@@ -305,184 +375,70 @@ function editContact(button)
     startEditRow(row);
 }
 
-// Called from the view as saveEditedContact(this): validate then PUT to the server
-function saveEditedContact(button)
-{
+async function saveEditedContact(button) {
     var row = button.closest("tr");
     var index = rowIndexOf(button);
-
-    if (index === -1 || !userContacts[index]) {
-        return;
-    }
+    if (index === -1 || !userContacts[index]) return;
 
     var contactId = userContacts[index].id;
     var edited = readEditedRow(row);
-    var phoneDigits = edited.phone.replaceAll(/\D/g, "");
+    var phoneDigits = edited.phone.replace(/\D/g, "");
 
-    // Same rules as the Add form (validateName/validatePhone/validateEmail)
     var nameOk = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u.test(edited.name);
     var phoneOk = phoneDigits.length >= 10 && phoneDigits.length <= 12;
     var emailOk = edited.email === "" || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(edited.email);
 
     if (!nameOk || !phoneOk || !emailOk) {
-        alert("Invalid values: name must be letters, phone 10-12 digits, email a valid address.");
+        alert("Invalid values: name must contain letters/digits, phone must be 10-12 digits, and email must be valid.");
         return;
     }
 
-    fetch(SITE_URL + "contact/update/" + encodeURIComponent(contactId), {
-        method: "PUT",
-        body: new URLSearchParams({
+    try {
+        var updated = await window.ContactDB.update(contactId, {
             name: edited.name,
-            phone: edited.phone,
+            phone: phoneDigits,
             email: edited.email
-        })
-    })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            if (data.success) {
-                userContacts[index].name = edited.name;
-                userContacts[index].phone = phoneDigits;
-                userContacts[index].email = edited.email;
-                endEditRow(row, userContacts[index]);
-            } else {
-                alert(data.message || "Failed to update contact.");
-            }
-        })
-        .catch(function () {
-            alert("Could not reach the server. Please try again.");
         });
+
+        userContacts[index] = updated;
+        endEditRow(row, updated);
+    } catch (err) {
+        alert("Failed to update contact: " + err.message);
+    }
 }
 
-// Called from the view as cancelEditRow(this): restore original values
-function cancelEditRow(button)
-{
+function cancelEditRow(button) {
     var index = rowIndexOf(button);
-
-    if (index === -1 || !userContacts[index]) {
-        return;
-    }
-
+    if (index === -1 || !userContacts[index]) return;
     endEditRow(button.closest("tr"), userContacts[index]);
 }
 
-// Only clear the "add contact" inputs, never the search box
-function clearData()
-{
-    setInputValue(userNameInp, "");
-    setInputValue(userPhoneInp, "");
-    setInputValue(userEmailInp, "");
+/**
+ * Real-time Search Handler
+ */
+var searchDebounceTimer = null;
+function handleSearch() {
+    if (!searchInput) return;
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(function () {
+        currentSearch = searchInput.value.trim();
+        currentPage = 1;
+        loadContacts(1);
+    }, 200);
 }
-
-
-function searchFunction() 
-{
-  var input = document.getElementById("myInput");
-  if (!input) {
-    return;
-  }
-
-  var filter = input.value.trim().toUpperCase();
-  var rows = document.querySelectorAll("#tableBody tr");
-
-  Array.prototype.forEach.call(rows, function (row) {
-    var contactValues = Array.from(row.querySelectorAll("td"))
-      .slice(0, 3)
-      .map(function (cell) {
-        return (cell.textContent || "").toUpperCase();
-      });
-
-    var matches = contactValues.some(function (value) {
-      return value.includes(filter);
-    });
-
-    row.style.display = matches ? "" : "none";
-  });
-}
-
-var searchInput = document.getElementById("myInput");
-var searchForm = document.getElementById("searchForm");
 
 if (searchInput) {
-    searchInput.addEventListener("input", searchFunction);
+    searchInput.addEventListener("input", handleSearch);
 }
-
 if (searchForm) {
-    searchForm.addEventListener("submit", function () {
-        searchInput.value = searchInput.value.trim();
+    searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        handleSearch();
     });
 }
 
-searchFunction();
-
-
-// Show/hide an inline alert; tolerate a missing element so the flow never crashes
-function showAlert(id, show)
-{
-    var el = document.getElementById(id);
-
-    if (el) {
-        el.style.display = show ? "block" : "none";
-    }
-}
-
-function validateName()
-{
-    // Unicode-aware: accepts Persian/Arabic/English letters and digits
-    // (matches the server, which only requires a non-empty name)
-    var regex = /^[\p{L}\p{N}]+([\p{L}\p{N}](_|-| )[\p{L}\p{N}]+)*[\p{L}\p{N}]+$/u;
-    if (regex.test(userNameInp.value))
-    {
-        showAlert("nameAlert", false);
-        return true;
-    }
-    else
-    {
-        showAlert("nameAlert", true);
-        return false;
-    }
-}
-
-function validatePhone()
-{
-    // Same rule as the server-side Validator::isValidPhoneNumber:
-    // strip non-digit characters and accept 10-12 digits.
-    // Covers 10-digit local numbers, 11-digit Iranian mobile (09xxxxxxxxx),
-    // and international numbers with country code.
-    var cleanedPhone = userPhoneInp.value.replaceAll(/\D/g, "");
-    var length = cleanedPhone.length;
-
-    if (length >= 10 && length <= 12) {
-        showAlert("phoneAlert", false);
-        return true;
-    }
-
-    showAlert("phoneAlert", true);
-    return false;
-}
-
-
-function validateEmail()
-{
-    // Email is optional: an empty field is considered valid
-    if (userEmailInp.value.trim() === "") {
-        showAlert("mailAlert", false);
-        return true;
-    }
-
-    // Simple structural check (local@domain.tld) — the server-side
-    // Validator::isValidEmail uses PHP FILTER_VALIDATE_EMAIL anyway.
-    var regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-    
-    if (regex.test(userEmailInp.value))
-    {
-        showAlert("mailAlert", false);
-        return true;
-    }
-    else
-    {
-        showAlert("mailAlert", true);
-        return false;
-    }
-}
+// Window OnLoad initialization
+document.addEventListener("DOMContentLoaded", function () {
+    initFormOutlines();
+    loadContacts(1);
+});

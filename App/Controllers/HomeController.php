@@ -14,60 +14,6 @@ class HomeController
 
     public function index()
     {
-        global $faker;
-        global $request;
-        $faker = \Faker\Factory::create('fa_IR');
-
-        // for ($i = 0; $i < 10; $i++) {
-        //     $prefix = $faker->randomElement([
-        //         '0901',
-        //         '0902',
-        //         '0903',
-        //         '0910',
-        //         '0911',
-        //         '0912',
-        //         '0913',
-        //         '0914',
-        //         '0915',
-        //         '0916',
-        //         '0917',
-        //         '0918',
-        //         '0919',
-        //         '0920',
-        //         '0930',
-        //         '0935'
-        //     ]);
-        //     $phone = $prefix . $faker->numerify('#######');
-
-        //     $this->contactModel->create([
-        //         'name' => $faker->name(),
-        //         'phone' => $phone,
-        //         'email' => $faker->email()
-        //     ]);
-        // }
-        $search = isset($_GET['search']) ? trim((string) $_GET['search']) : '';
-        $where = [];
-        if ($search !== '') {
-            $where['AND'] = ["OR" => [
-                'name[~]' => $search,
-                'phone[~]' => $search,
-                'email[~]' => $search
-            ]];
-        }
-        $contacts = $this->contactModel->get('*', $where + ['ORDER' => ['created_at' => 'DESC']]);
-        $totalContacts = $this->contactModel->count($where);
-        $pageSize = $this->contactModel->getPageSize();
-        $currentPage = (isset($_GET['page']) && is_numeric($_GET['page']) && (int) $_GET['page'] > 0)
-            ? (int) $_GET['page']
-            : 1;
-        $totalPages = max(1, (int) ceil($totalContacts / $pageSize));
-        $currentPage = min($currentPage, $totalPages);
-
-        view('home.index', compact(
-            'contacts',
-            'currentPage',
-            'totalPages',
-            'search'
-        ));
+        view('home.index');
     }
 }
