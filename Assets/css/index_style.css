@@ -25,10 +25,24 @@
     --input-focus-border: #06b6d4;
     --input-text: #f8fafc;
     --label-text: #94a3b8;
+    --footer-text: #94a3b8;
 
     --accent: #06b6d4;
     --accent-hover: #0891b2;
     --accent-text: #ffffff;
+
+    --btn-bg: #0891b2;
+    --btn-bg-hover: #0e7490;
+    --btn-text: #ffffff;
+
+    --action-edit: #fbbf24;
+    --action-edit-hover-bg: rgba(251, 191, 36, 0.15);
+    --action-delete: #f87171;
+    --action-delete-hover-bg: rgba(248, 113, 113, 0.15);
+    --action-save: #34d399;
+    --action-save-hover-bg: rgba(52, 211, 153, 0.15);
+    --action-cancel: #94a3b8;
+    --action-cancel-hover-bg: rgba(248, 113, 113, 0.15);
 
     --table-text: #f8fafc;
     --table-stripe-bg: rgba(255, 255, 255, 0.025);
@@ -39,7 +53,7 @@
     --pagination-bg: rgba(15, 23, 42, 0.65);
     --pagination-border: rgba(255, 255, 255, 0.18);
     --pagination-text: #f8fafc;
-    --pagination-active-bg: #06b6d4;
+    --pagination-active-bg: #0891b2;
 
     --scrollbar-thumb: rgba(6, 182, 212, 0.4);
     --scrollbar-track: rgba(15, 23, 42, 0.3);
@@ -51,42 +65,56 @@
     accent-color: var(--accent);
 }
 
-/* Explicit Light Theme (when toggled) */
+/* Explicit Light Theme (when toggled) - WCAG 2.1 AA Calibrated */
 [data-theme="light"] {
     color-scheme: light;
     --bg-gradient: radial-gradient(circle at 80% 20%, #e2e8f0 0%, #f8fafc 70%);
     --body-text: #0f172a;
-    --jum-bg: rgba(255, 255, 255, 0.85);
+    --jum-bg: rgba(255, 255, 255, 0.88);
     --jum-border: rgba(0, 0, 0, 0.08);
     --jum-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
 
-    --card-subtle-bg: rgba(241, 245, 249, 0.85);
-    --input-bg: rgba(255, 255, 255, 0.95);
-    --input-border: rgba(0, 0, 0, 0.18);
-    --input-focus-border: #0891b2;
+    --card-subtle-bg: rgba(241, 245, 249, 0.9);
+    --input-bg: #ffffff;
+    --input-border: rgba(0, 0, 0, 0.22);
+    --input-focus-border: #0e7490;
     --input-text: #0f172a;
-    --label-text: #64748b;
+    --label-text: #475569;
+    --footer-text: #334155;
 
-    --accent: #0891b2;
-    --accent-hover: #0e7490;
+    --accent: #0e7490;
+    --accent-hover: #155e75;
     --accent-text: #ffffff;
+
+    --btn-bg: #0e7490;
+    --btn-bg-hover: #155e75;
+    --btn-text: #ffffff;
+
+    --action-edit: #b45309;
+    --action-edit-hover-bg: rgba(180, 83, 9, 0.12);
+    --action-delete: #dc2626;
+    --action-delete-hover-bg: rgba(220, 38, 38, 0.12);
+    --action-save: #047857;
+    --action-save-hover-bg: rgba(4, 120, 87, 0.12);
+    --action-cancel: #475569;
+    --action-cancel-hover-bg: rgba(220, 38, 38, 0.12);
 
     --table-text: #0f172a;
     --table-stripe-bg: rgba(0, 0, 0, 0.02);
-    --table-hover-bg: rgba(8, 145, 178, 0.07);
-    --table-header-bg: rgba(241, 245, 249, 0.92);
-    --table-border: rgba(0, 0, 0, 0.08);
+    --table-hover-bg: rgba(14, 116, 144, 0.08);
+    --table-header-bg: rgba(241, 245, 249, 0.95);
+    --table-border: rgba(0, 0, 0, 0.1);
 
     --pagination-bg: #ffffff;
-    --pagination-border: rgba(0, 0, 0, 0.18);
+    --pagination-border: rgba(0, 0, 0, 0.22);
     --pagination-text: #0f172a;
-    --pagination-active-bg: #0891b2;
+    --pagination-active-bg: #0e7490;
 
-    --scrollbar-thumb: rgba(8, 145, 178, 0.4);
-    --scrollbar-track: rgba(241, 245, 249, 0.6);
+    --scrollbar-thumb: rgba(14, 116, 144, 0.5);
+    --scrollbar-track: rgba(241, 245, 249, 0.7);
 
-    --toast-bg: rgba(255, 255, 255, 0.95);
-    --toast-border: rgba(0, 0, 0, 0.12);
+    --toast-bg: rgba(255, 255, 255, 0.98);
+    --toast-border: rgba(0, 0, 0, 0.14);
     --toast-text: #0f172a;
 }
 
@@ -96,37 +124,51 @@
         color-scheme: light;
         --bg-gradient: radial-gradient(circle at 80% 20%, #e2e8f0 0%, #f8fafc 70%);
         --body-text: #0f172a;
-        --jum-bg: rgba(255, 255, 255, 0.85);
+        --jum-bg: rgba(255, 255, 255, 0.88);
         --jum-border: rgba(0, 0, 0, 0.08);
         --jum-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
 
-        --card-subtle-bg: rgba(241, 245, 249, 0.85);
-        --input-bg: rgba(255, 255, 255, 0.95);
-        --input-border: rgba(0, 0, 0, 0.18);
-        --input-focus-border: #0891b2;
+        --card-subtle-bg: rgba(241, 245, 249, 0.9);
+        --input-bg: #ffffff;
+        --input-border: rgba(0, 0, 0, 0.22);
+        --input-focus-border: #0e7490;
         --input-text: #0f172a;
-        --label-text: #64748b;
+        --label-text: #475569;
+        --footer-text: #334155;
 
-        --accent: #0891b2;
-        --accent-hover: #0e7490;
+        --accent: #0e7490;
+        --accent-hover: #155e75;
         --accent-text: #ffffff;
+
+        --btn-bg: #0e7490;
+        --btn-bg-hover: #155e75;
+        --btn-text: #ffffff;
+
+        --action-edit: #b45309;
+        --action-edit-hover-bg: rgba(180, 83, 9, 0.12);
+        --action-delete: #dc2626;
+        --action-delete-hover-bg: rgba(220, 38, 38, 0.12);
+        --action-save: #047857;
+        --action-save-hover-bg: rgba(4, 120, 87, 0.12);
+        --action-cancel: #475569;
+        --action-cancel-hover-bg: rgba(220, 38, 38, 0.12);
 
         --table-text: #0f172a;
         --table-stripe-bg: rgba(0, 0, 0, 0.02);
-        --table-hover-bg: rgba(8, 145, 178, 0.07);
-        --table-header-bg: rgba(241, 245, 249, 0.92);
-        --table-border: rgba(0, 0, 0, 0.08);
+        --table-hover-bg: rgba(14, 116, 144, 0.08);
+        --table-header-bg: rgba(241, 245, 249, 0.95);
+        --table-border: rgba(0, 0, 0, 0.1);
 
         --pagination-bg: #ffffff;
-        --pagination-border: rgba(0, 0, 0, 0.18);
+        --pagination-border: rgba(0, 0, 0, 0.22);
         --pagination-text: #0f172a;
-        --pagination-active-bg: #0891b2;
+        --pagination-active-bg: #0e7490;
 
-        --scrollbar-thumb: rgba(8, 145, 178, 0.4);
-        --scrollbar-track: rgba(241, 245, 249, 0.6);
+        --scrollbar-thumb: rgba(14, 116, 144, 0.5);
+        --scrollbar-track: rgba(241, 245, 249, 0.7);
 
-        --toast-bg: rgba(255, 255, 255, 0.95);
-        --toast-border: rgba(0, 0, 0, 0.12);
+        --toast-bg: rgba(255, 255, 255, 0.98);
+        --toast-border: rgba(0, 0, 0, 0.14);
         --toast-text: #0f172a;
     }
 }
@@ -316,10 +358,10 @@ body {
     font-size: 15px;
     font-weight: 600;
     border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+    background: linear-gradient(135deg, var(--btn-bg) 0%, var(--btn-bg-hover) 100%);
     border: none;
-    color: var(--accent-text);
-    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+    color: var(--btn-text);
+    box-shadow: 0 4px 14px rgba(14, 116, 144, 0.35);
     transition: all 0.2s ease;
     cursor: pointer;
 }
@@ -425,31 +467,31 @@ body {
 }
 
 .contact-action-edit:hover {
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.12);
+    color: var(--action-edit);
+    background: var(--action-edit-hover-bg);
 }
 
 .contact-action-delete:hover {
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.12);
+    color: var(--action-delete);
+    background: var(--action-delete-hover-bg);
 }
 
 .contact-action-save {
-    color: #10b981;
+    color: var(--action-save);
 }
 
 .contact-action-save:hover {
-    color: #10b981;
-    background: rgba(16, 185, 129, 0.15);
+    color: var(--action-save);
+    background: var(--action-save-hover-bg);
 }
 
 .contact-action-cancel {
-    color: var(--label-text);
+    color: var(--action-cancel);
 }
 
 .contact-action-cancel:hover {
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.15);
+    color: var(--action-delete);
+    background: var(--action-delete-hover-bg);
 }
 
 /* Inline Edit Controls */
@@ -517,7 +559,7 @@ body {
 /* Footer */
 footer {
     padding: 24px 0;
-    color: var(--label-text);
+    color: var(--footer-text, var(--label-text));
     font-size: 13px;
     letter-spacing: 0.3px;
 }
