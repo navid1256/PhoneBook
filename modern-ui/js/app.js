@@ -15,9 +15,7 @@
     const userEmailInp = document.getElementById("userEmail");
     const tableBody = document.getElementById("tableBody");
     const addForm = document.getElementById("addForm");
-    const addStatus = document.getElementById("addStatus");
     const searchInput = document.getElementById("myInput");
-    const searchForm = document.getElementById("searchForm");
     const paginationList = document.getElementById("paginationList");
     const paginationNav = document.getElementById("paginationNav");
     const themeToggleBtn = document.getElementById("themeToggle");
@@ -278,7 +276,9 @@ function renderPagination(totalPages, activePage) {
     prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous page">&laquo;</a>`;
     prevLi.addEventListener("click", function (e) {
         e.preventDefault();
-        if (activePage > 1) loadContacts(activePage - 1, currentSearch);
+        if (activePage > 1) {
+            void loadContacts(activePage - 1, currentSearch);
+        }
     });
     paginationList.appendChild(prevLi);
 
@@ -289,7 +289,7 @@ function renderPagination(totalPages, activePage) {
         pageLi.innerHTML = `<a class="page-link" href="#" ${p === activePage ? 'aria-current="page"' : ''}>${p}</a>`;
         pageLi.addEventListener("click", function (e) {
             e.preventDefault();
-            loadContacts(p, currentSearch);
+            void loadContacts(p, currentSearch);
         });
         paginationList.appendChild(pageLi);
     }
@@ -300,7 +300,9 @@ function renderPagination(totalPages, activePage) {
     nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next page">&raquo;</a>`;
     nextLi.addEventListener("click", function (e) {
         e.preventDefault();
-        if (activePage < totalPages) loadContacts(activePage + 1, currentSearch);
+        if (activePage < totalPages) {
+            void loadContacts(activePage + 1, currentSearch);
+        }
     });
     paginationList.appendChild(nextLi);
 }
@@ -370,7 +372,7 @@ if (searchInput) {
     searchInput.addEventListener("input", function () {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(function () {
-            loadContacts(1, searchInput.value.trim());
+            void loadContacts(1, searchInput.value.trim());
         }, 250);
     });
 }
@@ -469,15 +471,15 @@ window.handleSaveEdit = async function (btn, id) {
 
 window.handleCancelEdit = function () {
     editingRow = null;
-    loadContacts(currentPage, currentSearch);
+    void loadContacts(currentPage, currentSearch);
 };
 
 // Initial Load
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function () {
-            loadContacts(1, "");
+            void loadContacts(1, "");
         });
     } else {
-        loadContacts(1, "");
+        void loadContacts(1, "");
     }
 })();
