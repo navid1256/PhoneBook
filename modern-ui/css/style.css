@@ -501,14 +501,19 @@ body {
     box-shadow: 1px 0 0 0 var(--input-focus-border), 0 -1px 0 0 var(--input-focus-border), 0 1px 0 0 var(--input-focus-border);
 }
 
-/* Validation Pseudo-classes */
-.inp .form-outline .form-control.is-invalid~.form-notch div,
-.inp .form-outline .form-control:user-invalid~.form-notch div {
+/* Validation States */
+.inp .form-outline .form-control.is-invalid {
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+.inp .form-outline .form-control.is-invalid~.form-notch div {
     border-color: #ef4444;
 }
 
-.inp .form-outline .form-control.is-invalid~.form-label,
-.inp .form-outline .form-control:user-invalid~.form-label {
+.inp .form-outline .form-control.is-invalid~.form-label {
     color: #ef4444;
 }
 

@@ -219,9 +219,27 @@ function validateField(input, regex, alertElement) {
     return isValid;
 }
 
-userNameInp.addEventListener("blur", () => validateField(userNameInp, validationRules.name, document.getElementById("nameAlert")));
-userPhoneInp.addEventListener("blur", () => validateField(userPhoneInp, validationRules.phone, document.getElementById("phoneAlert")));
-userEmailInp.addEventListener("blur", () => validateField(userEmailInp, validationRules.email, document.getElementById("mailAlert")));
+// Clear validation error on input when user types
+[userNameInp, userPhoneInp, userEmailInp].forEach(function (input) {
+    if (!input) return;
+    input.addEventListener("input", function () {
+        if (input.classList.contains("is-invalid")) {
+            if (input === userNameInp && validationRules.name.test(input.value.trim())) {
+                input.classList.remove("is-invalid");
+                const alertEl = document.getElementById("nameAlert");
+                if (alertEl) alertEl.style.display = "none";
+            } else if (input === userPhoneInp && validationRules.phone.test(input.value.trim())) {
+                input.classList.remove("is-invalid");
+                const alertEl = document.getElementById("phoneAlert");
+                if (alertEl) alertEl.style.display = "none";
+            } else if (input === userEmailInp && validationRules.email.test(input.value.trim())) {
+                input.classList.remove("is-invalid");
+                const alertEl = document.getElementById("mailAlert");
+                if (alertEl) alertEl.style.display = "none";
+            }
+        }
+    });
+});
 
 /* --- Render Functions ---------------------------------------------- */
 function renderContactsTable(contacts) {
@@ -365,6 +383,15 @@ if (addForm) {
             userNameInp.value = "";
             userPhoneInp.value = "";
             userEmailInp.value = "";
+            userNameInp.classList.remove("is-invalid");
+            userPhoneInp.classList.remove("is-invalid");
+            userEmailInp.classList.remove("is-invalid");
+            const nameAlert = document.getElementById("nameAlert");
+            const phoneAlert = document.getElementById("phoneAlert");
+            const mailAlert = document.getElementById("mailAlert");
+            if (nameAlert) nameAlert.style.display = "none";
+            if (phoneAlert) phoneAlert.style.display = "none";
+            if (mailAlert) mailAlert.style.display = "none";
             updateFormOutline(userNameInp);
             updateFormOutline(userPhoneInp);
             updateFormOutline(userEmailInp);
