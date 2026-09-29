@@ -1,0 +1,72 @@
+/* Integrated PhoneBook searchbox styling with modern theme tokens */
+
+.search {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchTerm {
+    width: 100%;
+    border: 1px solid var(--input-border, rgba(255, 255, 255, 0.2));
+    border-right: none;
+    padding: 8px 14px;
+    height: 42px;
+    border-radius: 10px 0 0 10px;
+    outline: none;
+    background-color: var(--input-bg, rgba(15, 23, 42, 0.6));
+    color: var(--input-text, #f8fafc);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.searchTerm::placeholder {
+    color: var(--label-text, #94a3b8);
+    opacity: 1;
+}
+
+.searchTerm:focus {
+    border-color: var(--accent, #06b6d4);
+    color: var(--input-text, #f8fafc);
+    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+}
+
+.searchButton {
+    width: 44px;
+    height: 42px;
+    border: 1px solid var(--accent, #06b6d4);
+    background: var(--accent, #06b6d4);
+    text-align: center;
+    color: #ffffff;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.searchButton:hover {
+    background: var(--accent-hover, #0891b2);
+    border-color: var(--accent-hover, #0891b2);
+}
+
+.searchButton:active {
+    transform: scale(0.96);
+}
+
+/* Sits in the flex .navbar opposite the h3 title */
+.wrap {
+    width: 35%;
+    min-width: 240px;
+    margin: 0;
+}
+
+@media (max-width: 767.98px) {
+    .wrap {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
