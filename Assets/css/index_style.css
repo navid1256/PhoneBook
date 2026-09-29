@@ -41,6 +41,19 @@ body {
    needs: white input text + a subtle dark input background, and a
    light label color instead of MDB's dark rgba(0,0,0,.6).
    ------------------------------------------------------------------ */
+.inp {
+    align-self: flex-start;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.inp form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
 .inp .form-outline {
     position: relative;
 }
@@ -202,6 +215,7 @@ body {
 
 .btn1 {
     margin: 20px 0px;
+    margin-top: auto;
 }
 
 .btn-info {

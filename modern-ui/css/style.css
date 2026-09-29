@@ -356,6 +356,16 @@ body {
     border: 1px solid var(--jum-border);
     border-radius: 12px;
     padding: 24px 20px;
+    align-self: flex-start;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.inp form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .inp h5 {
@@ -531,7 +541,7 @@ body {
 
 /* Submit Button */
 .btn1 {
-    margin-top: 22px;
+    margin-top: auto;
     height: 46px;
     font-size: 15px;
     font-weight: 600;
