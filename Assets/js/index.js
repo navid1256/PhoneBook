@@ -326,48 +326,120 @@ function rowIndexOf(button) {
     return Array.prototype.indexOf.call(tableBody.querySelectorAll("tr"), row);
 }
 
-// Called from the view as deleteContact(this)
-function deleteContact(button) {
-    if (!confirm("Are you sure you want to delete this contact ?")) {
-        return;
+/**
+ * Centered Delete Confirmation Modal Handler
+ * Follows modern-web-guidance for HTML5 <dialog> with focus management & light dismiss.
+ * @returns {Promise<boolean>}
+ */
+function showDeleteConfirmModal() {
+    var modal = document.getElementById("deleteConfirmModal");
+    if (!modal || typeof modal.showModal !== "function") {
+        return Promise.resolve(confirm("Are you Sure You want to Delete this contact ?"));
     }
 
+    return new Promise(function (resolve) {
+        var yesBtn = document.getElementById("confirmDeleteYes");
+        var noBtn = document.getElementById("confirmDeleteNo");
+
+        function cleanup() {
+            if (modal.open) {
+                modal.close();
+            }
+            if (yesBtn) yesBtn.removeEventListener("click", onYes);
+            if (noBtn) noBtn.removeEventListener("click", onNo);
+            modal.removeEventListener("cancel", onCancel);
+            modal.removeEventListener("click", onBackdropClick);
+        }
+
+        function onYes() {
+            cleanup();
+            resolve(true);
+        }
+
+        function onNo() {
+            cleanup();
+            resolve(false);
+        }
+
+        function onCancel(e) {
+            e.preventDefault();
+            cleanup();
+            resolve(false);
+        }
+
+        function onBackdropClick(e) {
+            if (e.target === modal) {
+                var rect = modal.getBoundingClientRect();
+                var isInDialog = (
+                    rect.top <= e.clientY &&
+                    e.clientY <= rect.top + rect.height &&
+                    rect.left <= e.clientX &&
+                    e.clientX <= rect.left + rect.width
+                );
+                if (!isInDialog) {
+                    cleanup();
+                    resolve(false);
+                }
+            }
+        }
+
+        if (yesBtn) yesBtn.addEventListener("click", onYes);
+        if (noBtn) noBtn.addEventListener("click", onNo);
+        modal.addEventListener("cancel", onCancel);
+        modal.addEventListener("click", onBackdropClick);
+
+        modal.showModal();
+        if (noBtn) {
+            noBtn.focus();
+        }
+    });
+}
+
+// Called from the view as deleteContact(this)
+function deleteContact(button) {
     var index = rowIndexOf(button);
 
     if (index === -1) {
         return;
     }
 
-    var contactId = userContacts[index].id;
+    var contactId = userContacts[index] ? userContacts[index].id : null;
 
     if (!contactId) {
         return;
     }
 
-    // DELETE the contact on the server so it is removed from the database
-    fetch(SITE_URL + "contact/delete/" + encodeURIComponent(contactId), {
-        method: "DELETE"
-    })
-        .then(function (response) {
-            return response.json();
+    showDeleteConfirmModal().then(function (confirmed) {
+        if (!confirmed) {
+            if (button) button.focus();
+            return;
+        }
+
+        // DELETE the contact on the server so it is removed from the database
+        fetch(SITE_URL + "contact/delete/" + encodeURIComponent(contactId), {
+            method: "DELETE"
         })
-        .then(function (data) {
-            if (data.success) {
-                // Remove the row immediately, then reload so the table
-                // and pagination reflect the database
-                userContacts.splice(index, 1);
-                displayData();
-                showToast(data.message || "Contact deleted successfully", true);
-                setTimeout(function () {
-                    window.location.reload();
-                }, 700);
-            } else {
-                showToast(data.message || "Failed to delete contact.", false);
-            }
-        })
-        .catch(function () {
-            showToast("Could not reach the server. Please try again.", false);
-        });
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    // Remove the row immediately, then reload so the table
+                    // and pagination reflect the database
+                    userContacts.splice(index, 1);
+                    displayData();
+                    showToast(data.message || "Contact deleted successfully", true);
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 700);
+                } else {
+                    showToast(data.message || "Failed to delete contact.", false);
+                }
+            })
+            .catch(function () {
+                showToast("Could not reach the server. Please try again.", false);
+            });
+    });
 }
 
 // Set an MDB input value and notify its floating label
