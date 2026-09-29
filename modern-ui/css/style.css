@@ -321,11 +321,11 @@ body {
     width: 26px;
 }
 
-/* Light Mode / Active (ON state) */
+/* Light Mode / Active (ON state) - Warm Yellow Theme Toggle */
 [data-theme="light"] .apple-switch-track,
 .apple-switch[aria-checked="true"] .apple-switch-track {
-    background-color: #34c759;
-    border-color: #30b753;
+    background-color: #f59e0b;
+    border-color: #d97706;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
@@ -342,6 +342,7 @@ body {
 [data-theme="light"] .apple-icon-sun,
 .apple-switch[aria-checked="true"] .apple-icon-sun {
     opacity: 1;
+    color: #ffffff;
 }
 
 [data-theme="light"] .apple-icon-moon,
