@@ -239,54 +239,114 @@ body {
     color: var(--accent);
 }
 
-/* Theme Toggle Button */
-.theme-toggle-btn {
+/* ------------------------------------------------------------------
+   Apple iOS Style On/Off Theme Toggle Switch
+   ------------------------------------------------------------------ */
+.apple-switch {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    border: 1px solid var(--input-border, rgba(255, 255, 255, 0.18));
-    background: var(--input-bg, rgba(15, 23, 42, 0.65));
-    color: var(--accent);
+    border: none;
+    background: transparent;
+    padding: 0;
     cursor: pointer;
-    font-size: 1.15rem;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
+    vertical-align: middle;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.theme-toggle-btn:hover {
-    transform: translateY(-2px);
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+.apple-switch:focus-visible .apple-switch-track {
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.45);
 }
 
-.theme-toggle-btn:active {
-    transform: scale(0.95);
+.apple-switch-track {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 52px;
+    height: 28px;
+    border-radius: 999px;
+    padding: 2px;
+    background-color: #334155;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    user-select: none;
 }
 
-.theme-toggle-btn i {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Subtle icons inside track */
+.apple-icon-sun,
+.apple-icon-moon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-.theme-toggle-btn:hover i {
-    transform: rotate(20deg);
+.apple-icon-sun {
+    left: 7px;
+    color: #f59e0b;
+    opacity: 0;
 }
 
-[data-theme="light"] .theme-toggle-btn {
-    color: #d97706;
-    background: #ffffff;
-    border-color: rgba(0, 0, 0, 0.18);
+.apple-icon-moon {
+    right: 8px;
+    color: #cbd5e1;
+    opacity: 1;
 }
 
-[data-theme="light"] .theme-toggle-btn:hover {
-    background: #d97706;
-    border-color: #d97706;
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+/* Apple iOS Switch Knob (Thumb) */
+.apple-switch-thumb {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                width 0.2s ease;
+    z-index: 2;
+}
+
+/* When pressed down (interactive stretch) */
+.apple-switch:active .apple-switch-thumb {
+    width: 26px;
+}
+
+/* Light Mode / Active (ON state) */
+[data-theme="light"] .apple-switch-track,
+.apple-switch[aria-checked="true"] .apple-switch-track {
+    background-color: #34c759;
+    border-color: #30b753;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .apple-switch-thumb,
+.apple-switch[aria-checked="true"] .apple-switch-thumb {
+    transform: translateX(24px);
+}
+
+[data-theme="light"] .apple-switch:active .apple-switch-thumb,
+.apple-switch[aria-checked="true"]:active .apple-switch-thumb {
+    transform: translateX(20px);
+}
+
+[data-theme="light"] .apple-icon-sun,
+.apple-switch[aria-checked="true"] .apple-icon-sun {
+    opacity: 1;
+}
+
+[data-theme="light"] .apple-icon-moon,
+.apple-switch[aria-checked="true"] .apple-icon-moon {
+    opacity: 0;
 }
 
 /* ------------------------------------------------------------------

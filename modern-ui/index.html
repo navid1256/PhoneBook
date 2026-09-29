@@ -24,26 +24,28 @@
                 <h1 class="h3 m-0 d-flex align-items-center gap-2">
                     <span>Phone Book</span>
                     <i class="far fa-address-book text-info"></i>
-                    <span class="badge bg-info-subtle text-info border border-info-subtle fs-6 rounded-pill ms-2">v2 Modern</span>
                 </h1>
-            </div>
 
-            <!-- Header Actions: Search & Theme Toggle -->
-            <div class="d-flex align-items-center gap-3 ms-auto">
-                <form id="searchForm" onsubmit="return false;" class="wrap mb-0">
-                    <div class="search">
-                        <label for="myInput" class="visually-hidden">Search contacts</label>
-                        <input type="text" id="myInput" class="searchTerm" name="search" placeholder="What Contact are you looking for?" aria-label="Search contacts" autocomplete="off" spellcheck="false">
-                        <button type="submit" class="searchButton" aria-label="Search">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                </form>
-
-                <button type="button" id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark/light theme" title="Toggle theme">
-                    <i id="themeIcon" class="fas fa-moon"></i>
+                <!-- Apple iOS Style Theme Toggle (replacing v2 Modern badge) -->
+                <button type="button" id="themeToggle" class="apple-switch ms-1" role="switch" aria-checked="false" aria-label="Toggle dark/light theme" title="Toggle theme">
+                    <span class="apple-switch-track">
+                        <i class="fas fa-sun apple-icon-sun" aria-hidden="true"></i>
+                        <i class="fas fa-moon apple-icon-moon" aria-hidden="true"></i>
+                        <span class="apple-switch-thumb"></span>
+                    </span>
                 </button>
             </div>
+
+            <!-- Search Box -->
+            <form id="searchForm" onsubmit="return false;" class="wrap mb-0 ms-auto">
+                <div class="search">
+                    <label for="myInput" class="visually-hidden">Search contacts</label>
+                    <input type="text" id="myInput" class="searchTerm" name="search" placeholder="What Contact are you looking for?" aria-label="Search contacts" autocomplete="off" spellcheck="false">
+                    <button type="submit" class="searchButton" aria-label="Search">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </form>
         </header>
 
         <div class="row g-4">

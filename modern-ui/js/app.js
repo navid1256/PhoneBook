@@ -53,6 +53,7 @@
             }
         }
         if (themeToggleBtn) {
+            themeToggleBtn.setAttribute("aria-checked", theme === "light" ? "true" : "false");
             themeToggleBtn.setAttribute(
                 "title",
                 theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"
