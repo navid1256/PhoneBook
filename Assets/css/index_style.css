@@ -43,15 +43,6 @@ body {
    ------------------------------------------------------------------ */
 .inp {
     align-self: flex-start;
-    min-height: 480px;
-    display: flex;
-    flex-direction: column;
-}
-
-.inp form {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
 }
 
 .inp .form-outline {
@@ -215,7 +206,6 @@ body {
 
 .btn1 {
     margin: 20px 0px;
-    margin-top: auto;
 }
 
 .btn-info {
