@@ -20,6 +20,7 @@
     --jum-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 
     --card-subtle-bg: rgba(15, 23, 42, 0.55);
+    --input-notch-bg: #141f33;
     --input-bg: rgba(15, 23, 42, 0.65);
     --input-border: rgba(255, 255, 255, 0.18);
     --input-focus-border: #06b6d4;
@@ -75,6 +76,7 @@
     --jum-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
 
     --card-subtle-bg: rgba(241, 245, 249, 0.9);
+    --input-notch-bg: #f1f5f9;
     --input-bg: #ffffff;
     --input-border: rgba(0, 0, 0, 0.22);
     --input-focus-border: #0e7490;
@@ -129,6 +131,7 @@
         --jum-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
 
         --card-subtle-bg: rgba(241, 245, 249, 0.9);
+        --input-notch-bg: #f1f5f9;
         --input-bg: #ffffff;
         --input-border: rgba(0, 0, 0, 0.22);
         --input-focus-border: #0e7490;
@@ -244,19 +247,46 @@ body {
     width: 42px;
     height: 42px;
     border-radius: 10px;
-    border: 1px solid var(--jum-border);
-    background: var(--card-subtle-bg);
+    border: 1px solid var(--input-border, rgba(255, 255, 255, 0.18));
+    background: var(--input-bg, rgba(15, 23, 42, 0.65));
     color: var(--accent);
     cursor: pointer;
     font-size: 1.15rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
 }
 
 .theme-toggle-btn:hover {
     transform: translateY(-2px);
     background: var(--accent);
+    border-color: var(--accent);
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle-btn i {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle-btn:hover i {
+    transform: rotate(20deg);
+}
+
+[data-theme="light"] .theme-toggle-btn {
+    color: #d97706;
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="light"] .theme-toggle-btn:hover {
+    background: #d97706;
+    border-color: #d97706;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
 }
 
 /* Form Section (Left Column) */
@@ -287,18 +317,20 @@ body {
 
 .inp .form-outline .form-control {
     min-height: auto;
-    height: 44px;
-    padding: 0.55rem 0.75rem;
-    border: 0;
+    height: 46px;
+    padding: 0.6rem 0.85rem;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
     background-color: var(--input-bg);
     color: var(--input-text);
     transition: all 0.2s linear;
     border-radius: 8px;
-    outline: none;
-    box-shadow: none !important;
 }
 
 .inp .form-outline .form-control:focus {
+    border: 0 !important;
+    outline: none !important;
     box-shadow: none !important;
     background-color: var(--input-bg);
     color: var(--input-text);
@@ -312,13 +344,14 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     left: 0.75rem;
-    padding-top: 0.58rem;
+    padding-top: 0.65rem;
     pointer-events: none;
     transform-origin: 0 0;
-    transition: all 0.2s ease-out;
+    transition: transform 0.2s ease-out, color 0.2s ease-out;
     color: var(--label-text);
-    font-size: 16px;
+    font-size: 0.95rem;
     margin-bottom: 0;
+    z-index: 5;
 }
 
 .inp .form-outline .form-control~.form-notch {
@@ -369,8 +402,12 @@ body {
 /* The label floats onto the outline border when focused or holds a value (.active) */
 .inp .form-outline .form-control.active~.form-label,
 .inp .form-outline .form-control:focus~.form-label {
-    transform: translateY(-1.15rem) translateY(0.1rem) scale(0.8);
+    transform: translateY(-1.15rem) scale(0.8);
     font-weight: 600;
+    background-color: var(--input-notch-bg, #141f33);
+    padding: 0 6px;
+    border-radius: 4px;
+    z-index: 5;
 }
 
 .inp .form-outline .form-control:focus~.form-label {
@@ -381,13 +418,13 @@ body {
 .inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
     border-right: none;
     border-left: none;
-    border-top: 1px solid transparent;
+    border-top: 1px solid transparent !important;
 }
 
 .inp .form-outline .form-control:focus~.form-notch .form-notch-middle {
     border-color: var(--input-focus-border);
     box-shadow: 0 1px 0 0 var(--input-focus-border);
-    border-top: 1px solid transparent;
+    border-top: 1px solid transparent !important;
 }
 
 .inp .form-outline .form-control.active~.form-notch .form-notch-leading,
@@ -410,13 +447,20 @@ body {
     box-shadow: 1px 0 0 0 var(--input-focus-border), 0 -1px 0 0 var(--input-focus-border), 0 1px 0 0 var(--input-focus-border);
 }
 
-/* Validation Pseudo-classes */
-.inp .form-outline .form-control:user-invalid~.form-notch div {
-    border-color: #ef4444;
+/* Validation Pseudo-classes & Bootstrap is-invalid class */
+.inp .form-outline .form-control.is-invalid,
+.inp .form-outline .form-control:user-invalid {
+    background-image: none !important;
 }
 
+.inp .form-outline .form-control.is-invalid~.form-notch div,
+.inp .form-outline .form-control:user-invalid~.form-notch div {
+    border-color: #ef4444 !important;
+}
+
+.inp .form-outline .form-control.is-invalid~.form-label,
 .inp .form-outline .form-control:user-invalid~.form-label {
-    color: #ef4444;
+    color: #ef4444 !important;
 }
 
 /* Hide native spinner arrows of number inputs */

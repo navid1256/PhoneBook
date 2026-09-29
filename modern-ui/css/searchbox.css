@@ -59,8 +59,8 @@
 
 /* Sits in the flex .navbar opposite the h3 title */
 .wrap {
-    width: 35%;
-    min-width: 240px;
+    width: 300px;
+    max-width: 100%;
     margin: 0;
 }
 

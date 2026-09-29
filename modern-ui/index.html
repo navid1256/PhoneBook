@@ -28,22 +28,22 @@
                 </h1>
             </div>
 
-            <!-- Controls: Theme Toggle -->
-            <div class="d-flex align-items-center gap-2">
-                <button type="button" id="themeToggle" class="btn btn-outline-secondary btn-sm rounded-circle p-2" aria-label="Toggle dark/light theme" title="Toggle theme">
+            <!-- Header Actions: Search & Theme Toggle -->
+            <div class="d-flex align-items-center gap-3 ms-auto">
+                <form id="searchForm" onsubmit="return false;" class="wrap mb-0">
+                    <div class="search">
+                        <label for="myInput" class="visually-hidden">Search contacts</label>
+                        <input type="text" id="myInput" class="searchTerm" name="search" placeholder="What Contact are you looking for?" aria-label="Search contacts" autocomplete="off" spellcheck="false">
+                        <button type="submit" class="searchButton" aria-label="Search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <button type="button" id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark/light theme" title="Toggle theme">
                     <i id="themeIcon" class="fas fa-moon"></i>
                 </button>
             </div>
-
-            <form id="searchForm" onsubmit="return false;" class="wrap">
-                <div class="search">
-                    <label for="myInput" class="visually-hidden">Search contacts</label>
-                    <input type="text" id="myInput" class="searchTerm" name="search" placeholder="What Contact are you looking for?" aria-label="Search contacts" autocomplete="off" spellcheck="false">
-                    <button type="submit" class="searchButton" aria-label="Search">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </form>
         </header>
 
         <div class="row g-4">

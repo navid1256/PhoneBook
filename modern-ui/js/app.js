@@ -1,136 +1,147 @@
-'use strict';
+(function () {
+    'use strict';
 
-/**
- * PhoneBook Modern UI Controller
- * Powered by Dexie.js (IndexedDB) with Bootstrap 5.3 & Modern Web Standards
- */
+    /**
+     * PhoneBook Modern UI Controller
+     * Powered by Dexie.js (IndexedDB) with Bootstrap 5.3 & Modern Web Standards
+     */
 
-// Initialize Dexie database (shares the same database as Classic UI)
-const dexieDB = new Dexie('PhoneBookDB');
-dexieDB.version(1).stores({
-    contacts: '++id, name, phone, email, created_at'
-});
+    // Shared singleton instance initialized in Assets/js/db.js
+    const contactDB = window.ContactDB || (typeof ContactDatabase !== 'undefined' && typeof window.dexieDB !== 'undefined' ? new ContactDatabase(window.dexieDB) : null);
 
-const contactDB = new ContactDatabase(dexieDB);
+    // DOM Elements
+    const userNameInp = document.getElementById("userName");
+    const userPhoneInp = document.getElementById("userPhone");
+    const userEmailInp = document.getElementById("userEmail");
+    const tableBody = document.getElementById("tableBody");
+    const addForm = document.getElementById("addForm");
+    const addStatus = document.getElementById("addStatus");
+    const searchInput = document.getElementById("myInput");
+    const searchForm = document.getElementById("searchForm");
+    const paginationList = document.getElementById("paginationList");
+    const paginationNav = document.getElementById("paginationNav");
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
 
-// DOM Elements
-const userNameInp = document.getElementById("userName");
-const userPhoneInp = document.getElementById("userPhone");
-const userEmailInp = document.getElementById("userEmail");
-const tableBody = document.getElementById("tableBody");
-const addForm = document.getElementById("addForm");
-const addStatus = document.getElementById("addStatus");
-const searchInput = document.getElementById("myInput");
-const searchForm = document.getElementById("searchForm");
-const paginationList = document.getElementById("paginationList");
-const paginationNav = document.getElementById("paginationNav");
-const themeToggleBtn = document.getElementById("themeToggle");
-const themeIcon = document.getElementById("themeIcon");
+    // State
+    let currentPage = 1;
+    const pageSize = 20;
+    let currentSearch = "";
+    let userContacts = [];
+    let editingRow = null;
 
-// State
-let currentPage = 1;
-const pageSize = 20;
-let currentSearch = "";
-let userContacts = [];
-let editingRow = null;
-
-/* --- Theme Management (Dark / Light Mode) ------------------------- */
-function getCurrentTheme() {
-    const saved = localStorage.getItem("phonebook-theme");
-    if (saved) return saved;
-    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-}
-
-function applyTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.dataset.bsTheme = theme;
-    const metaScheme = document.querySelector('meta[name="color-scheme"]');
-    if (metaScheme) {
-        metaScheme.content = theme;
+    /* --- Theme Management (Dark / Light Mode) ------------------------- */
+    function getCurrentTheme() {
+        const saved = localStorage.getItem("phonebook-theme");
+        if (saved) return saved;
+        return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
     }
-    localStorage.setItem("phonebook-theme", theme);
-    if (themeIcon) {
-        if (theme === "light") {
-            themeIcon.classList.remove("fa-moon");
-            themeIcon.classList.add("fa-sun");
-        } else {
-            themeIcon.classList.remove("fa-sun");
-            themeIcon.classList.add("fa-moon");
+
+    function applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.bsTheme = theme;
+        const metaScheme = document.querySelector('meta[name="color-scheme"]');
+        if (metaScheme) {
+            metaScheme.content = theme;
+        }
+        localStorage.setItem("phonebook-theme", theme);
+        if (themeIcon) {
+            if (theme === "light") {
+                themeIcon.classList.remove("fa-moon");
+                themeIcon.classList.add("fa-sun");
+            } else {
+                themeIcon.classList.remove("fa-sun");
+                themeIcon.classList.add("fa-moon");
+            }
+        }
+        if (themeToggleBtn) {
+            themeToggleBtn.setAttribute(
+                "title",
+                theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"
+            );
+            themeToggleBtn.setAttribute(
+                "aria-label",
+                theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"
+            );
         }
     }
-}
 
-if (themeToggleBtn) {
-    applyTheme(getCurrentTheme());
-    themeToggleBtn.addEventListener("click", function () {
-        const next = getCurrentTheme() === "dark" ? "light" : "dark";
-        applyTheme(next);
-    });
-}
-
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
-    if (!localStorage.getItem("phonebook-theme")) {
-        applyTheme(e.matches ? "dark" : "light");
+    if (themeToggleBtn) {
+        applyTheme(getCurrentTheme());
+        themeToggleBtn.addEventListener("click", function () {
+            const next = getCurrentTheme() === "dark" ? "light" : "dark";
+            applyTheme(next);
+        });
     }
-});
 
-/* --- Floating Toast Notification Manager --------------------------- */
-function showToast(message, ok) {
-    const container = document.getElementById("toastContainer");
-    if (!container) return;
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
+        if (!localStorage.getItem("phonebook-theme")) {
+            applyTheme(e.matches ? "dark" : "light");
+        }
+    });
 
-    const toast = document.createElement("div");
-    toast.className = "toast-item " + (ok ? "toast-success" : "toast-error");
+    /* --- Floating Toast Notification Manager --------------------------- */
+    function showToast(message, ok) {
+        const container = document.getElementById("toastContainer");
+        if (!container) return;
 
-    const icon = document.createElement("i");
-    icon.className = "fas " + (ok ? "fa-check-circle" : "fa-exclamation-circle");
+        const toast = document.createElement("div");
+        toast.className = "toast-item " + (ok ? "toast-success" : "toast-error");
 
-    const text = document.createElement("span");
-    text.textContent = message;
+        const icon = document.createElement("i");
+        icon.className = "fas " + (ok ? "fa-check-circle" : "fa-exclamation-circle");
 
-    toast.appendChild(icon);
-    toast.appendChild(text);
-    container.appendChild(toast);
+        const text = document.createElement("span");
+        text.textContent = message;
 
-    setTimeout(function () {
-        toast.classList.add("toast-hide");
+        toast.appendChild(icon);
+        toast.appendChild(text);
+        container.appendChild(toast);
+
         setTimeout(function () {
-            toast.remove();
-        }, 300);
-    }, 3500);
-}
-
-/* --- Material Form Outline Behavior -------------------------------- */
-function updateFormOutline(input) {
-    if (!input) return;
-    const wrapper = input.closest(".form-outline");
-    if (!wrapper) return;
-
-    const label = wrapper.querySelector(".form-label");
-    const notchMiddle = wrapper.querySelector(".form-notch-middle");
-
-    if (input.value && input.value.trim() !== "") {
-        input.classList.add("active");
-    } else {
-        input.classList.remove("active");
+            toast.classList.add("toast-hide");
+            setTimeout(function () {
+                toast.remove();
+            }, 300);
+        }, 3500);
     }
 
-    if (label && notchMiddle) {
-        notchMiddle.style.width = (label.clientWidth * 0.8 + 8) + "px";
+    /* --- Material Form Outline Behavior -------------------------------- */
+    function updateFormOutline(input) {
+        if (!input) return;
+        const wrapper = input.closest(".form-outline");
+        if (!wrapper) return;
+
+        const label = wrapper.querySelector(".form-label");
+        const notchMiddle = wrapper.querySelector(".form-notch-middle");
+
+        const hasValue = Boolean(input.value && String(input.value).trim() !== "");
+        const isFocused = (document.activeElement === input);
+
+        if (hasValue || isFocused) {
+            input.classList.add("active");
+        } else {
+            input.classList.remove("active");
+        }
+
+        if (label && notchMiddle) {
+            // Measure actual label width for pixel-perfect notch opening
+            const labelWidth = label.scrollWidth || label.clientWidth || 55;
+            notchMiddle.style.width = Math.ceil(labelWidth * 0.8 + 10) + "px";
+        }
     }
-}
 
-function initFormOutlines(scope) {
-    const inputs = (scope || document).querySelectorAll(".form-outline .form-control");
-    inputs.forEach(function (input) {
-        updateFormOutline(input);
-        input.addEventListener("input", () => updateFormOutline(input));
-        input.addEventListener("focus", () => updateFormOutline(input));
-        input.addEventListener("blur", () => updateFormOutline(input));
-    });
-}
+    function initFormOutlines(scope) {
+        const inputs = (scope || document).querySelectorAll(".form-outline .form-control");
+        inputs.forEach(function (input) {
+            updateFormOutline(input);
+            input.addEventListener("input", function () { updateFormOutline(input); });
+            input.addEventListener("focus", function () { updateFormOutline(input); });
+            input.addEventListener("blur", function () { updateFormOutline(input); });
+        });
+    }
 
-initFormOutlines();
+    initFormOutlines();
 
 /* --- Phone Input Restrictions -------------------------------------- */
 function attachPhoneInputRestrictions(input) {
@@ -462,6 +473,11 @@ window.handleCancelEdit = function () {
 };
 
 // Initial Load
-document.addEventListener("DOMContentLoaded", function () {
-    loadContacts(1, "");
-});
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", function () {
+            loadContacts(1, "");
+        });
+    } else {
+        loadContacts(1, "");
+    }
+})();
