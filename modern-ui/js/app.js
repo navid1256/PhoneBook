@@ -105,7 +105,10 @@
         }, 3500);
     }
 
-    /* --- Material Form Outline Behavior (Classic UI Replica) ---------- */
+    /* --- Material Form Outline Behavior (Interactive Notched Outline) -----
+       Calculates the notch cutout width to match the floating label,
+       and manages the `.active` class when fields contain text or are focused.
+       ------------------------------------------------------------------ */
     function updateFormOutline(input) {
         if (!input) return;
         const wrapper = input.closest(".form-outline");
@@ -114,22 +117,29 @@
         const label = wrapper.querySelector(".form-label");
         const notchMiddle = wrapper.querySelector(".form-notch-middle");
 
-        if (input.value !== "") {
+        if (input.value && input.value.trim() !== "") {
             input.classList.add("active");
         } else {
             input.classList.remove("active");
         }
 
         if (label && notchMiddle) {
-            notchMiddle.style.width = label.clientWidth + "px";
+            notchMiddle.style.width = (label.clientWidth * 0.8 + 8) + "px";
         }
     }
 
     function initFormOutlines(scope) {
         const inputs = (scope || document).querySelectorAll(".form-outline .form-control");
-        inputs.forEach(function (input) {
+        Array.prototype.forEach.call(inputs, function (input) {
             updateFormOutline(input);
+
             input.addEventListener("input", function () {
+                updateFormOutline(input);
+            });
+            input.addEventListener("focus", function () {
+                updateFormOutline(input);
+            });
+            input.addEventListener("blur", function () {
                 updateFormOutline(input);
             });
         });
@@ -326,6 +336,8 @@ async function loadContacts(page = 1, search = "") {
 
 // Add Contact Form Submit
 if (addForm) {
+    const addStatus = document.getElementById("addStatus");
+
     addForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
@@ -345,6 +357,9 @@ if (addForm) {
         try {
             await contactDB.add(name, phone, email);
             showToast(`Contact "${name}" added successfully!`, true);
+            if (addStatus) {
+                addStatus.style.display = "none";
+            }
 
             // Reset form
             userNameInp.value = "";
@@ -357,12 +372,26 @@ if (addForm) {
             await loadContacts(1, currentSearch);
         } catch (err) {
             console.error(err);
+            if (addStatus) {
+                addStatus.textContent = err.message || "Could not add contact";
+                addStatus.style.display = "block";
+            }
             showToast(err.message || "Could not add contact", false);
         }
     });
 }
 
 // Search
+const searchForm = document.getElementById("searchForm");
+if (searchForm) {
+    searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (searchInput) {
+            void loadContacts(1, searchInput.value.trim());
+        }
+    });
+}
+
 if (searchInput) {
     let debounceTimer;
     searchInput.addEventListener("input", function () {

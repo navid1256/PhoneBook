@@ -19,15 +19,15 @@
 
     <div class="jumbotron jum">
 
-        <header class="navbar flex-wrap align-items-center justify-content-between gap-3 mb-4">
-            <div class="d-flex align-items-center gap-3">
-                <h1 class="h3 m-0 d-flex align-items-center gap-2">
+        <header class="navbar flex-wrap">
+            <div class="brand-section">
+                <h3>
                     <span>Phone Book</span>
-                    <i class="far fa-address-book text-info"></i>
-                </h1>
+                    <i class="far fa-address-book"></i>
+                </h3>
 
-                <!-- Apple iOS Style Theme Toggle (replacing v2 Modern badge) -->
-                <button type="button" id="themeToggle" class="apple-switch ms-1" role="switch" aria-checked="false" aria-label="Toggle dark/light theme" title="Toggle theme">
+                <!-- Apple iOS Style Theme Toggle -->
+                <button type="button" id="themeToggle" class="apple-switch" role="switch" aria-checked="false" aria-label="Toggle dark/light theme" title="Toggle theme">
                     <span class="apple-switch-track">
                         <i class="fas fa-sun apple-icon-sun" aria-hidden="true"></i>
                         <i class="fas fa-moon apple-icon-moon" aria-hidden="true"></i>
@@ -37,7 +37,7 @@
             </div>
 
             <!-- Search Box -->
-            <form id="searchForm" onsubmit="return false;" class="wrap mb-0 ms-auto">
+            <form id="searchForm" onsubmit="return false;" class="wrap">
                 <div class="search">
                     <label for="myInput" class="visually-hidden">Search contacts</label>
                     <input type="text" id="myInput" class="searchTerm" name="search" placeholder="What Contact are you looking for?" aria-label="Search contacts" autocomplete="off" spellcheck="false">
@@ -48,14 +48,14 @@
             </form>
         </header>
 
-        <div class="row g-4">
+        <div class="row">
 
             <!-- Add Contact Form -->
             <div class="col-lg-4 inp">
                 <h5 class="mt-2">Add New Contact</h5>
 
                 <form id="addForm" onsubmit="return false;">
-                    <div class="form-outline mt-3" data-mdb-input-init>
+                    <div class="form-outline mt-3">
                         <input type="text" id="userName" name="name" class="form-control" autocomplete="name" />
                         <label class="form-label" for="userName">Name</label>
                         <div class="form-notch">
@@ -66,7 +66,7 @@
                     </div>
                     <div id="nameAlert" class="alert alert-danger p-2" style="display:none;">Please add name</div>
 
-                    <div class="form-outline mt-3" data-mdb-input-init>
+                    <div class="form-outline mt-3">
                         <input type="number" id="userPhone" name="phone" class="form-control" min="0" max="999999999999" inputmode="numeric" autocomplete="tel" />
                         <label class="form-label" for="userPhone">Phone</label>
                         <div class="form-notch">
@@ -75,9 +75,9 @@
                             <div class="form-notch-trailing"></div>
                         </div>
                     </div>
-                    <div id="phoneAlert" class="alert alert-danger p-2" style="display:none;">Please add a valid number (10-12 digits)</div>
+                    <div id="phoneAlert" class="alert alert-danger p-2" style="display:none;">Please add a valid number</div>
 
-                    <div class="form-outline mt-3" data-mdb-input-init>
+                    <div class="form-outline mt-3">
                         <input type="text" id="userEmail" name="email" class="form-control" autocomplete="email" />
                         <label class="form-label" for="userEmail">E-mail (optional)</label>
                         <div class="form-notch">
@@ -87,6 +87,7 @@
                         </div>
                     </div>
                     <div id="mailAlert" class="alert alert-danger p-2" style="display:none;">Please add a valid e-mail</div>
+                    <div id="addStatus" class="alert alert-danger p-2" style="display:none;"></div>
 
                     <button type="submit" id="btnAddContact" class="btn btn-info w-100 btn1">Add</button>
                 </form>
@@ -94,8 +95,8 @@
 
             <!-- Contacts Table & Pagination -->
             <div class="col-lg-8">
-                <div class="table-responsive rounded-3 border" style="border-color: var(--table-border, rgba(255, 255, 255, 0.08)) !important;">
-                    <table id="myTable" class="table table-striped align-middle mb-0" aria-label="Contacts list">
+                <div class="table-responsive">
+                    <table id="myTable" class="table table-striped align-middle" aria-label="Contacts list">
                         <thead class="tableh1">
                             <tr>
                                 <th scope="col">Name</th>
