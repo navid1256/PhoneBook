@@ -104,7 +104,7 @@
         }, 3500);
     }
 
-    /* --- Material Form Outline Behavior -------------------------------- */
+    /* --- Material Form Outline Behavior (Classic UI Replica) ---------- */
     function updateFormOutline(input) {
         if (!input) return;
         const wrapper = input.closest(".form-outline");
@@ -113,19 +113,14 @@
         const label = wrapper.querySelector(".form-label");
         const notchMiddle = wrapper.querySelector(".form-notch-middle");
 
-        const hasValue = Boolean(input.value && String(input.value).trim() !== "");
-        const isFocused = (document.activeElement === input);
-
-        if (hasValue || isFocused) {
+        if (input.value !== "") {
             input.classList.add("active");
         } else {
             input.classList.remove("active");
         }
 
         if (label && notchMiddle) {
-            // Measure actual label width for pixel-perfect notch opening
-            const labelWidth = label.scrollWidth || label.clientWidth || 55;
-            notchMiddle.style.width = Math.ceil(labelWidth * 0.8 + 10) + "px";
+            notchMiddle.style.width = label.clientWidth + "px";
         }
     }
 
@@ -133,9 +128,9 @@
         const inputs = (scope || document).querySelectorAll(".form-outline .form-control");
         inputs.forEach(function (input) {
             updateFormOutline(input);
-            input.addEventListener("input", function () { updateFormOutline(input); });
-            input.addEventListener("focus", function () { updateFormOutline(input); });
-            input.addEventListener("blur", function () { updateFormOutline(input); });
+            input.addEventListener("input", function () {
+                updateFormOutline(input);
+            });
         });
     }
 
