@@ -50,10 +50,17 @@ class InMemoryContactStorage {
         return this.records.find(c => c.id === Number(id)) || null;
     }
 
-    async add(data) {
-        const name = (data.name || '').trim();
-        const phone = this.normalizePhone(data.phone);
-        const email = (data.email || '').trim();
+    async add(data, phoneArg, emailArg) {
+        let name, phone, email;
+        if (data && typeof data === 'object') {
+            name = (data.name || '').trim();
+            phone = this.normalizePhone(data.phone);
+            email = (data.email || '').trim();
+        } else {
+            name = (data || '').trim();
+            phone = this.normalizePhone(phoneArg);
+            email = (emailArg || '').trim();
+        }
 
         if (!name || !phone) {
             throw new Error('Name and phone are required.');
@@ -79,11 +86,18 @@ class InMemoryContactStorage {
         return newRecord;
     }
 
-    async update(id, data) {
+    async update(id, data, phoneArg, emailArg) {
         const numId = Number(id);
-        const name = (data.name || '').trim();
-        const phone = this.normalizePhone(data.phone);
-        const email = (data.email || '').trim();
+        let name, phone, email;
+        if (data && typeof data === 'object') {
+            name = (data.name || '').trim();
+            phone = this.normalizePhone(data.phone);
+            email = (data.email || '').trim();
+        } else {
+            name = (data || '').trim();
+            phone = this.normalizePhone(phoneArg);
+            email = (emailArg || '').trim();
+        }
 
         if (!name || !phone) {
             throw new Error('Name and phone are required.');
@@ -224,5 +238,38 @@ describe('Contact Database Logic (Dexie / Client Storage)', () => {
         const page3 = await db.getPaginated(3, 10);
         assert.strictEqual(page3.currentPage, 3);
         assert.strictEqual(page3.contacts.length, 5);
+    });
+
+    test('supports add and update with separate arguments (name, phone, email)', async () => {
+        const contact = await db.add('fasfasf', '179874665155', '');
+        assert.strictEqual(contact.id, 1);
+        assert.strictEqual(contact.name, 'fasfasf');
+        assert.strictEqual(contact.phone, '179874665155');
+        assert.strictEqual(contact.email, null);
+
+        const updated = await db.update(contact.id, 'fasfasf_updated', '179874665155', 'test@example.com');
+        assert.strictEqual(updated.name, 'fasfasf_updated');
+        assert.strictEqual(updated.email, 'test@example.com');
+    });
+
+    test('validates form input rules accurately', () => {
+        const nameRegex = /^[a-zA-Z\u0600-\u06FF\s]{2,50}$/;
+        const phoneRegex = /^\d{10,12}$/;
+        const emailRegex = /^$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        // Valid cases
+        assert.strictEqual(nameRegex.test('fasfasf'), true);
+        assert.strictEqual(nameRegex.test('نوید احمدزاده'), true);
+        assert.strictEqual(phoneRegex.test('179874665155'), true);
+        assert.strictEqual(phoneRegex.test('09121234567'), true);
+        assert.strictEqual(emailRegex.test(''), true);
+        assert.strictEqual(emailRegex.test('navid@example.com'), true);
+
+        // Invalid cases
+        assert.strictEqual(nameRegex.test('a'), false); // too short
+        assert.strictEqual(nameRegex.test(''), false); // empty
+        assert.strictEqual(phoneRegex.test('12345'), false); // too short (<10)
+        assert.strictEqual(phoneRegex.test('1234567890123'), false); // too long (>12)
+        assert.strictEqual(emailRegex.test('invalid-email'), false);
     });
 });
