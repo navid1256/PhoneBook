@@ -856,3 +856,126 @@ input:focus:not(:focus-visible) {
     max-width: 320px;
     line-height: 1.4;
 }
+
+/* ------------------------------------------------------------------
+   Delete Confirmation Modal (HTML5 <dialog> with Glassmorphism)
+   ------------------------------------------------------------------ */
+dialog.confirm-modal {
+    border: 1px solid var(--jum-border);
+    border-radius: 16px;
+    background: var(--card-subtle-bg);
+    color: var(--body-text);
+    padding: 26px 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    max-width: 420px;
+    width: 90vw;
+    margin: auto;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    animation: modalScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+dialog.confirm-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: backdropFadeIn 0.22s ease forwards;
+}
+
+@keyframes modalScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes backdropFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.confirm-modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.confirm-modal-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(220, 38, 38, 0.15);
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.confirm-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    color: var(--body-text);
+}
+
+.confirm-modal-desc {
+    font-size: 0.95rem;
+    color: var(--label-text);
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.confirm-modal-actions .btn {
+    flex: 1;
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.confirm-btn-no {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--body-text);
+    border: 1px solid var(--jum-border) !important;
+}
+
+.confirm-btn-no:hover,
+.confirm-btn-no:focus {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: var(--body-text);
+    transform: translateY(-1px);
+}
+
+.confirm-btn-yes {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+}
+
+.confirm-btn-yes:hover,
+.confirm-btn-yes:focus {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.45);
+    transform: translateY(-1px);
+}

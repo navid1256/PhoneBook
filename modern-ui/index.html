@@ -130,6 +130,21 @@
     <!-- Floating Toast Notification Container -->
     <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
+    <!-- Delete Confirmation Modal (HTML5 <dialog> with Glassmorphism & Keyboard Accessibility) -->
+    <dialog id="deleteConfirmModal" class="confirm-modal" closedby="any" aria-labelledby="deleteModalTitle" aria-describedby="deleteModalDesc">
+        <div class="confirm-modal-content">
+            <div class="confirm-modal-icon">
+                <i class="fas fa-trash-alt" aria-hidden="true"></i>
+            </div>
+            <h4 id="deleteModalTitle" class="confirm-modal-title">Delete Contact</h4>
+            <p id="deleteModalDesc" class="confirm-modal-desc">Are you Sure You want to Delete this contact ?</p>
+            <div class="confirm-modal-actions">
+                <button type="button" id="confirmDeleteNo" class="btn confirm-btn-no">No</button>
+                <button type="button" id="confirmDeleteYes" class="btn confirm-btn-yes">Yes</button>
+            </div>
+        </div>
+    </dialog>
+
     <footer class="text-center py-3 text-muted" style="font-size: 0.9rem;">
         Navid Ahmadzade &copy; 2026. All rights reserved.
     </footer>

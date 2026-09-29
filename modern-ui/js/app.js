@@ -429,6 +429,75 @@ if (searchInput) {
     });
 }
 
+/**
+ * Centered Delete Confirmation Modal Handler
+ * Follows modern-web-guidance for HTML5 <dialog> with focus management & light dismiss.
+ * @returns {Promise<boolean>}
+ */
+function showDeleteConfirmModal() {
+    const modal = document.getElementById("deleteConfirmModal");
+    if (!modal || typeof modal.showModal !== "function") {
+        return Promise.resolve(confirm("Are you Sure You want to Delete this contact ?"));
+    }
+
+    return new Promise(function (resolve) {
+        const yesBtn = document.getElementById("confirmDeleteYes");
+        const noBtn = document.getElementById("confirmDeleteNo");
+
+        function cleanup() {
+            if (modal.open) {
+                modal.close();
+            }
+            if (yesBtn) yesBtn.removeEventListener("click", onYes);
+            if (noBtn) noBtn.removeEventListener("click", onNo);
+            modal.removeEventListener("cancel", onCancel);
+            modal.removeEventListener("click", onBackdropClick);
+        }
+
+        function onYes() {
+            cleanup();
+            resolve(true);
+        }
+
+        function onNo() {
+            cleanup();
+            resolve(false);
+        }
+
+        function onCancel(e) {
+            e.preventDefault();
+            cleanup();
+            resolve(false);
+        }
+
+        function onBackdropClick(e) {
+            if (e.target === modal) {
+                const rect = modal.getBoundingClientRect();
+                const isInDialog = (
+                    rect.top <= e.clientY &&
+                    e.clientY <= rect.top + rect.height &&
+                    rect.left <= e.clientX &&
+                    e.clientX <= rect.left + rect.width
+                );
+                if (!isInDialog) {
+                    cleanup();
+                    resolve(false);
+                }
+            }
+        }
+
+        if (yesBtn) yesBtn.addEventListener("click", onYes);
+        if (noBtn) noBtn.addEventListener("click", onNo);
+        modal.addEventListener("cancel", onCancel);
+        modal.addEventListener("click", onBackdropClick);
+
+        modal.showModal();
+        if (noBtn) {
+            noBtn.focus();
+        }
+    });
+}
+
 // Delete Contact
 window.handleDeleteClick = async function (btn) {
     const tr = btn.closest("tr");
@@ -436,7 +505,9 @@ window.handleDeleteClick = async function (btn) {
     const id = Number(tr.dataset.id);
     const name = tr.querySelector(".name") ? tr.querySelector(".name").textContent : "this contact";
 
-    if (!confirm(`Are you sure you want to delete ${name}?`)) {
+    const confirmed = await showDeleteConfirmModal();
+    if (!confirmed) {
+        if (btn) btn.focus();
         return;
     }
 
