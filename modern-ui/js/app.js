@@ -373,7 +373,7 @@ if (addForm) {
         const email = userEmailInp.value.trim();
 
         try {
-            await contactDB.add(name, phone, email);
+            await contactDB.add({ name, phone, email });
             showToast(`Contact "${name}" added successfully!`, true);
             if (addStatus) {
                 addStatus.style.display = "none";
@@ -511,7 +511,7 @@ window.handleSaveEdit = async function (btn, id) {
     }
 
     try {
-        await contactDB.update(id, name, phone, email);
+        await contactDB.update(id, { name, phone, email });
         showToast("Contact updated successfully!", true);
         editingRow = null;
         await loadContacts(currentPage, currentSearch);

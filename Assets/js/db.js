@@ -71,11 +71,19 @@ class ContactDatabase {
 
     /**
      * Add new contact.
+     * Supports both add({ name, phone, email }) and add(name, phone, email).
      */
-    async add(data) {
-        const name = (data.name || '').trim();
-        const phone = this.normalizePhone(data.phone);
-        const email = (data.email || '').trim();
+    async add(data, phoneArg, emailArg) {
+        let name, phone, email;
+        if (data && typeof data === 'object') {
+            name = (data.name || '').trim();
+            phone = this.normalizePhone(data.phone);
+            email = (data.email || '').trim();
+        } else {
+            name = (data || '').trim();
+            phone = this.normalizePhone(phoneArg);
+            email = (emailArg || '').trim();
+        }
 
         if (!name || !phone) {
             throw new Error('Name and phone are required.');
@@ -103,12 +111,20 @@ class ContactDatabase {
 
     /**
      * Update existing contact.
+     * Supports both update(id, { name, phone, email }) and update(id, name, phone, email).
      */
-    async update(id, data) {
+    async update(id, data, phoneArg, emailArg) {
         const numId = Number(id);
-        const name = (data.name || '').trim();
-        const phone = this.normalizePhone(data.phone);
-        const email = (data.email || '').trim();
+        let name, phone, email;
+        if (data && typeof data === 'object') {
+            name = (data.name || '').trim();
+            phone = this.normalizePhone(data.phone);
+            email = (data.email || '').trim();
+        } else {
+            name = (data || '').trim();
+            phone = this.normalizePhone(phoneArg);
+            email = (emailArg || '').trim();
+        }
 
         if (!name || !phone) {
             throw new Error('Name and phone are required.');
