@@ -14,6 +14,7 @@ A fast, responsive, and accessible contact directory and management web applicat
 ## 🌐 Live Demo
 
 Experience the client-side IndexedDB version deployed live on GitHub Pages:
+
 👉 **[https://navid1256.github.io/PhoneBook/](https://navid1256.github.io/PhoneBook/)**
 
 👉 **[https://navid1256.github.io/PhoneBook/modern-ui](https://navid1256.github.io/PhoneBook/modern-ui/)**
